@@ -42,7 +42,7 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO customer (First_name, Last_name, Password, Address, Date_of_birth) values (@card_id, @first_name, @last_name, @password, @address, @date_of_birth)",
+                        commandText: "INSERT INTO customer (First_name, Last_name, Password, Address, Date_of_birth) values (@first_name, @last_name, @password, @address, @date_of_birth)",
                         parameters: new Dictionary<string, object>()
                         {
                             { "@first_name", instance.First_name },

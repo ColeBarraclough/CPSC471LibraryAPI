@@ -39,10 +39,8 @@ namespace Webservice.ControllerHelpers
             string lastName = (data.ContainsKey("last_name")) ? data.GetValue("last_name").Value<string>() : null;
             string password = (data.ContainsKey("password")) ? data.GetValue("password").Value<string>() : null;
             string address = (data.ContainsKey("address")) ? data.GetValue("address").Value<string>() : null;
-            string dateOfBirthString = (data.ContainsKey("date_of_birth")) ? data.GetValue("date_of_birth").Value<string>() : null;
+            DateTime dateOfBirth = (data.ContainsKey("date_of_birth")) ? data.GetValue("date_of_birth").Value<DateTime>() : new DateTime();
 
-
-            DateTime dateOfBirth = DateTime.Parse(dateOfBirthString);
 
             // Add instance to database
             var dbInstance = DatabaseLibrary.Helpers.CustomerHelper_db.Add(0, firstName, lastName, password, address, dateOfBirth,
