@@ -135,11 +135,11 @@ namespace Webservice.ControllerHelpers
         /// Gets a customer.
         /// </summary>
         /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
-        public static ResponseMessage Get(JObject data,
+        public static ResponseMessage Get(int? id,
         DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            int cardId = (data.ContainsKey("card_id")) ? data.GetValue("card_id").Value<int>() : -1;
+            int cardId = (int) id;
 
 
             // Get instances from database

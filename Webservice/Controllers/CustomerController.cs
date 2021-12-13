@@ -53,30 +53,29 @@ namespace Webservice.Controllers
         // Gets an instance.
         [HttpGet]
         [Route("customer")]
-        public ResponseMessage GetCustomer([FromBody] JObject data)
+        public ResponseMessage GetCustomer(int? card_id)
         {
-
-            var response = CustomerHelper.Get(data,
+            if (card_id == null)
+            {
+                var response = CustomerHelper.GetCollection(
                 context: Database.DbContext,
                 statusCode: out HttpStatusCode statusCode,
                 includeDetailedErrors: HostingEnvironment.IsDevelopment());
-            HttpContext.Response.StatusCode = (int)statusCode;
-            return response;
-        }
-
-        // Gets collection.
-        [HttpGet]
-        [Route("customers")]
-        public ResponseMessage GetCustomers()
-        {
-            var response = CustomerHelper.GetCollection(
+                HttpContext.Response.StatusCode = (int)statusCode;
+                return response;
+            } else
+            {
+                var response = CustomerHelper.Get(card_id,
                 context: Database.DbContext,
                 statusCode: out HttpStatusCode statusCode,
                 includeDetailedErrors: HostingEnvironment.IsDevelopment());
-            HttpContext.Response.StatusCode = (int)statusCode;
-            return response;
+                HttpContext.Response.StatusCode = (int)statusCode;
+                return response;
+            }
+            
         }
 
+        
 
 
 
