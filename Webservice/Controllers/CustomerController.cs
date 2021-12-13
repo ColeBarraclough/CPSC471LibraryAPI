@@ -77,5 +77,32 @@ namespace Webservice.Controllers
             return response;
         }
 
+
+        // Edits an instance.
+        [HttpPut]
+        [Route("customer")]
+        public ResponseMessage EditCustomer([FromBody] JObject data)
+        {
+            var response = CustomerHelper.Edit(data,
+                context: Database.DbContext,
+                statusCode: out HttpStatusCode statusCode,
+                includeDetailedErrors: HostingEnvironment.IsDevelopment());
+            HttpContext.Response.StatusCode = (int)statusCode;
+            return response;
+        }
+
+
+        // Deletes an instance
+        [HttpDelete]
+        [Route("customer")]
+        public ResponseMessage DeleteCustomer([FromBody] JObject data)
+        {
+            var response = CustomerHelper.Delete(data,
+                context: Database.DbContext,
+                statusCode: out HttpStatusCode statusCode,
+                includeDetailedErrors: HostingEnvironment.IsDevelopment());
+            HttpContext.Response.StatusCode = (int)statusCode;
+            return response;
+        }
     }
 }

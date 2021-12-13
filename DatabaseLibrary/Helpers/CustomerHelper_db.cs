@@ -57,7 +57,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Return value
-                statusResponse = new StatusResponse("Student added successfully");
+                statusResponse = new StatusResponse("Customer added successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -65,6 +65,100 @@ namespace DatabaseLibrary.Helpers
                 statusResponse = new StatusResponse(exception);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Edits an instance in the database
+        /// </summary>
+        public static Customer_db Edit(int cardId, string firstName, string lastName, string password, string address, DateTime dateOfBirth,
+           DbContext context, out StatusResponse statusResponse)
+        {
+            try
+            {
+                // Validate
+                if (cardId < 0)
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a card id.");
+                if (string.IsNullOrEmpty(firstName?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a first name.");
+                if (string.IsNullOrEmpty(lastName?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a last name.");
+                if (string.IsNullOrEmpty(password?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a password.");
+                if (string.IsNullOrEmpty(address?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a address.");
+                if (dateOfBirth == default(DateTime))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a date of birth.");
+
+                // Generate a new instance
+                Customer_db instance = new Customer_db
+                    (
+                        cardId, firstName, lastName, password, address, dateOfBirth
+                    );
+
+                // Add to database
+                int rowsAffected = context.ExecuteNonQueryCommand
+                    (
+                        commandText: "UPDATE customer SET First_name = @first_name, Last_name = @last_name, Password = @password, Address = @address, Date_of_birth = @date_of_birth WHERE card_id = @card_id",
+                        parameters: new Dictionary<string, object>()
+                        {
+                            {"@card_id", instance.Card_id },
+                            { "@first_name", instance.First_name },
+                            { "@last_name", instance.Last_name },
+                            { "@password", instance.Password },
+                            { "@address", instance.Address },
+                            { "@date_of_birth", instance.Date_of_birth }
+                        },
+                        message: out string message
+                    );
+                if (rowsAffected == -1)
+                    throw new Exception(message);
+
+                // Return value
+                statusResponse = new StatusResponse("Customer edited successfully");
+                return instance;
+            }
+            catch (Exception exception)
+            {
+                statusResponse = new StatusResponse(exception);
+                return null;
+            }
+
+        }
+
+
+        /// <summary>
+        /// Deletes an instance in the database
+        /// </summary>
+        public static void Delete(int cardId, DbContext context, out StatusResponse statusResponse)
+        {
+            try
+            {
+                // Validate
+                if (cardId < 0)
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a card id.");
+
+
+                // Add to database
+                int rowsAffected = context.ExecuteNonQueryCommand
+                    (
+                        commandText: "DELETE FROM customer WHERE card_id = @card_id",
+                        parameters: new Dictionary<string, object>()
+                        {
+                            {"@card_id", cardId },
+                        },
+                        message: out string message
+                    );
+                if (rowsAffected == -1)
+                    throw new Exception(message);
+
+                // Return value
+                statusResponse = new StatusResponse("Customer deleted successfully");
+            }
+            catch (Exception exception)
+            {
+                statusResponse = new StatusResponse(exception);
+            }
+
         }
 
         /// <summary>

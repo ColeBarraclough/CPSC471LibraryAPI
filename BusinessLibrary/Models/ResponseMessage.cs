@@ -21,6 +21,17 @@ namespace BusinessLibrary.Models
         {
         }
 
+
+        /// <summary>
+        /// Default constructor. 
+        /// Need for serialization purposes.
+        /// </summary>
+        public ResponseMessage(bool state, string message) 
+        {
+            State = state;
+                Message = message;
+        }
+
         /// <summary>
         /// Fields constructor.
         /// </summary>
