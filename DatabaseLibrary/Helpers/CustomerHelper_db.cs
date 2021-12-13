@@ -15,7 +15,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Adds a new instance into the database.
         /// </summary>
-        public static Customer_db Add(string firstName, string lastName, string password, string address, DateTime dateOfBirth,
+        public static Customer_db Add(int cardId, string firstName, string lastName, string password, string address, DateTime dateOfBirth,
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -45,11 +45,11 @@ namespace DatabaseLibrary.Helpers
                         commandText: "INSERT INTO customer (First_name, Last_name, Password, Address, Date_of_birth) values (@card_id, @first_name, @last_name, @password, @address, @date_of_birth)",
                         parameters: new Dictionary<string, object>()
                         {
-                            { "@first_name", instance.FirstName },
-                            { "@last_name", instance.LastName },
+                            { "@first_name", instance.First_name },
+                            { "@last_name", instance.Last_name },
                             { "@password", instance.Password },
                             { "@address", instance.Address },
-                            { "@date_of_birth", instance.DateOfBirth }
+                            { "@date_of_birth", instance.Date_of_birth }
                         },
                         message: out string message
                     );

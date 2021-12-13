@@ -22,7 +22,7 @@ namespace Webservice.ControllerHelpers
         {
             if (instance == null)
                 return null;
-            return new BusinessLibrary.Models.Customer(instance.CardId, instance.FirstName, instance.LastName, instance.Password, instance.Address, instance.DateOfBirth);
+            return new BusinessLibrary.Models.Customer(instance.Card_id, instance.First_name, instance.Last_name, instance.Password, instance.Address, instance.Date_of_birth);
         }
 
         #endregion
@@ -35,14 +35,17 @@ namespace Webservice.ControllerHelpers
             DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            string firstName = (data.ContainsKey("firstName")) ? data.GetValue("firstName").Value<string>() : null;
-            string lastName = (data.ContainsKey("lastName")) ? data.GetValue("lastName").Value<string>() : null;
+            string firstName = (data.ContainsKey("first_name")) ? data.GetValue("first_name").Value<string>() : null;
+            string lastName = (data.ContainsKey("last_name")) ? data.GetValue("last_name").Value<string>() : null;
             string password = (data.ContainsKey("password")) ? data.GetValue("password").Value<string>() : null;
             string address = (data.ContainsKey("address")) ? data.GetValue("address").Value<string>() : null;
-            DateTime dateOfBirth = (data.ContainsKey("date_of_birth")) ? data.GetValue("date_of_birth").Value<DateTime>() : default(DateTime);
+            string dateOfBirthString = (data.ContainsKey("date_of_birth")) ? data.GetValue("date_of_birth").Value<string>() : null;
+
+
+            DateTime dateOfBirth = DateTime.Parse(dateOfBirthString);
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.CustomerHelper_db.Add(firstName, lastName, password, address, dateOfBirth,
+            var dbInstance = DatabaseLibrary.Helpers.CustomerHelper_db.Add(0, firstName, lastName, password, address, dateOfBirth,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
