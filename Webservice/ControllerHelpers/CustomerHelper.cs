@@ -106,10 +106,10 @@ namespace Webservice.ControllerHelpers
             DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            int carId = (data.ContainsKey("card_id")) ? data.GetValue("card_id").Value<int>() : -1;
+            int cardId = (data.ContainsKey("card_id")) ? data.GetValue("card_id").Value<int>() : -1;
 
             // Add instance to database
-            DatabaseLibrary.Helpers.CustomerHelper_db.Delete(carId, context, out StatusResponse statusResponse);
+            DatabaseLibrary.Helpers.CustomerHelper_db.Delete(cardId, context, out StatusResponse statusResponse);
 
             bool failed = false;
 
@@ -132,7 +132,42 @@ namespace Webservice.ControllerHelpers
 
 
         /// <summary>
-        /// Gets list of students.
+        /// Gets a customer.
+        /// </summary>
+        /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
+        public static ResponseMessage Get(JObject data,
+        DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
+        {
+            // Extract paramters
+            int cardId = (data.ContainsKey("card_id")) ? data.GetValue("card_id").Value<int>() : -1;
+
+
+            // Get instances from database
+            var dbInstance = DatabaseLibrary.Helpers.CustomerHelper_db.Get(cardId,
+                context, out StatusResponse statusResponse);
+
+            // Convert to business logic objects
+            var instance = Convert(dbInstance);
+
+            // Get rid of detailed error message (when requested)
+            if (statusResponse.StatusCode == HttpStatusCode.InternalServerError
+                && !includeDetailedErrors)
+                statusResponse.Message = "Something went wrong while retrieving the customer";
+
+            // Return response
+            var response = new ResponseMessage
+                (
+                    instance != null,
+                    statusResponse.Message,
+                    instance
+                );
+            statusCode = statusResponse.StatusCode;
+            return response;
+        }
+
+
+        /// <summary>
+        /// Gets list of customers.
         /// </summary>
         /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
         public static ResponseMessage GetCollection(

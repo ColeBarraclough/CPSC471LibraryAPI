@@ -162,6 +162,53 @@ namespace DatabaseLibrary.Helpers
         }
 
         /// <summary>
+        /// Retrieves an instance.
+        /// </summary>
+        public static Customer_db Get(int cardId,
+            DbContext context, out StatusResponse statusResponse)
+        {
+            try
+            {
+                // Get from database
+                DataTable table = context.ExecuteDataQueryCommand
+                    (
+                        commandText: "SELECT * FROM customer WHERE card_id = @card_id",
+                        parameters: new Dictionary<string, object>()
+                        {
+                            {"@card_id", cardId },
+                        },
+                        message: out string message
+                    );
+                if (table == null)
+                    throw new Exception(message);
+
+                DataRow row = table.Rows[0];
+
+                // Parse data
+                Customer_db instance = new Customer_db
+                            (
+                                cardId: (int)row["Card_id"],
+                                firstName: row["First_name"].ToString(),
+                                lastName: row["Last_name"].ToString(),
+                                password: row["Password"].ToString(),
+                                address: row["Address"].ToString(),
+                                dateOfBirth: (DateTime)row["Date_of_birth"]
+                            );
+
+                // Return value
+                statusResponse = new StatusResponse("Customer has been retrieved successfully.");
+                return instance;
+            }
+            catch (Exception exception)
+            {
+                statusResponse = new StatusResponse(exception);
+                return null;
+            }
+        }
+
+
+
+        /// <summary>
         /// Retrieves a list of instances.
         /// </summary>
         public static List<Customer_db> GetCollection(

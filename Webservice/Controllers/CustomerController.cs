@@ -50,6 +50,20 @@ namespace Webservice.Controllers
         #endregion
 
 
+        // Gets an instance.
+        [HttpGet]
+        [Route("customer")]
+        public ResponseMessage GetCustomer([FromBody] JObject data)
+        {
+
+            var response = CustomerHelper.Get(data,
+                context: Database.DbContext,
+                statusCode: out HttpStatusCode statusCode,
+                includeDetailedErrors: HostingEnvironment.IsDevelopment());
+            HttpContext.Response.StatusCode = (int)statusCode;
+            return response;
+        }
+
         // Gets collection.
         [HttpGet]
         [Route("customers")]
@@ -62,6 +76,9 @@ namespace Webservice.Controllers
             HttpContext.Response.StatusCode = (int)statusCode;
             return response;
         }
+
+
+
 
         // Adds a new instance.
         [HttpPost]
@@ -76,6 +93,8 @@ namespace Webservice.Controllers
             HttpContext.Response.StatusCode = (int)statusCode;
             return response;
         }
+
+
 
 
         // Edits an instance.
