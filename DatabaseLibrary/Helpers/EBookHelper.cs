@@ -9,34 +9,34 @@ using System.Text;
 
 namespace DatabaseLibrary.Helpers
 {
-    public class DVDHelper_db
+    public class EBookHelper_db
     {
 
         /// <summary>
         /// Adds a new instance into the database.
         /// </summary>
-        public static DVD_db Add(int systemId, string title, string libraryAddress, string genre, DateTime publishingDate, int authorId,
-            int? borrowerId, DateTime? dateOfCheckOut, DateTime? dueDate, int runTime, DbContext context, out StatusResponse statusResponse)
+        public static EBook_db Add(int systemId, string title, string genre, DateTime publishingDate, int authorId, string link,
+            int pages, DbContext context, out StatusResponse statusResponse)
         {
             try
             {
                 // Validate
                 if (string.IsNullOrEmpty(title?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a title.");
-                if (string.IsNullOrEmpty(libraryAddress?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a last name.");
                 if (string.IsNullOrEmpty(genre?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
+                if (string.IsNullOrEmpty(link?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a link.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (runTime > 0)
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a run time.");
+                if (pages > 0)
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of pages.");
 
                 // Generate a new instance
-                DVD_db instance = new DVD_db
+                EBook_db instance = new EBook_db
                     (
                         systemId: 0, //This can be ignored is PK in your DB is auto increment
-                        title, libraryAddress, genre, publishingDate, authorId, borrowerId, dateOfCheckOut, dueDate, runTime
+                        title, genre, publishingDate, authorId, link, pages
                     );
 
                 // Add to database
@@ -75,11 +75,11 @@ namespace DatabaseLibrary.Helpers
 
                 rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO DVD (System_id, Run_time) values (@system_id, @run_time)",
+                        commandText: "INSERT INTO ebook (System_id, Pages) values (@system_id, @pages)",
                         parameters: new Dictionary<string, object>()
                         {
                             { "@system_id", instance.System_id },
-                            { "@length", instance.Run_Time }
+                            { "@pages", instance.Pages }
                         },
                         message: out string message
                     );
@@ -88,14 +88,11 @@ namespace DatabaseLibrary.Helpers
 
                 rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO physical_media (System_id, Library_address, Borrower_id, Date_of_check_out, Due_date) values (@system_id, @library_address, @borrower_id, @date_of_check_out, @due_date)",
+                        commandText: "INSERT INTO digital_media (System_id, Link) values (@system_id, @link)",
                         parameters: new Dictionary<string, object>()
                         {
                                             { "@system_id", instance.System_id },
-                                            { "@library_id", instance.Library_address },
-                                            { "@borrower_id", instance.Borrower_id },
-                                            { "@date_of_check_out", instance.Date_of_check_out },
-                                            { "@due_date", instance.Due_date }
+                                            { "@link", instance.Link },
                         },
                         message: out string message1
                     );
@@ -105,7 +102,7 @@ namespace DatabaseLibrary.Helpers
 
 
                 // Return value
-                statusResponse = new StatusResponse("DVD added successfully");
+                statusResponse = new StatusResponse("EBook added successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -118,8 +115,8 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Edits an instance in the database
         /// </summary>
-        public static DVD_db Edit(int systemId, string title, string libraryAddress, string genre, DateTime publishingDate, int authorId,
-            int? borrowerId, DateTime? dateOfCheckOut, DateTime? dueDate, int runTime,
+        public static EBook_db Edit(int systemId, string title, string genre, DateTime publishingDate, int authorId, string link,
+           int pages,
            DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -129,20 +126,20 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide an id.");
                 if (string.IsNullOrEmpty(title?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a title.");
-                if (string.IsNullOrEmpty(libraryAddress?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a last name.");
+                if (string.IsNullOrEmpty(link?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a link.");
                 if (string.IsNullOrEmpty(genre?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (runTime > 0)
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of run time.");
+                if (pages > 0)
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of pages.");
 
                 // Generate a new instance
-                DVD_db instance = new DVD_db
+                EBook_db instance = new EBook_db
                     (
                         systemId,
-                        title, libraryAddress, genre, publishingDate, authorId, borrowerId, dateOfCheckOut, dueDate, runTime
+                        title, genre, publishingDate, authorId, link, pages
                     );
 
                 // Add to database
@@ -165,14 +162,11 @@ namespace DatabaseLibrary.Helpers
 
                 rowsAffected = context.ExecuteNonQueryCommand
                 (
-                    commandText: "UPDATE physical_media SET library_address = @library_address, borrower_id = @borrower_id, date_of_check_out = @date_of_check_out, due_date = @due_date WHERE system_id = @system_id",
+                    commandText: "UPDATE digital_media SET Link = @link WHERE system_id = @system_id",
                     parameters: new Dictionary<string, object>()
                     {
                                         {"@system_id", instance.System_id },
-                                        { "@library_address", instance.Library_address },
-                                        { "@borrower_id", instance.Borrower_id },
-                                        { "@date_of_check_out", instance.Date_of_check_out },
-                                        { "@due_date", instance.Due_date }
+                                        { "@link", instance.Link }
                     },
                     message: out string message1
                 );
@@ -182,11 +176,11 @@ namespace DatabaseLibrary.Helpers
 
                 rowsAffected = context.ExecuteNonQueryCommand
                 (
-                    commandText: "UPDATE DVD SET run_time = @run_time WHERE system_id = @system_id",
+                    commandText: "UPDATE ebook SET pages = @pages WHERE system_id = @system_id",
                     parameters: new Dictionary<string, object>()
                     {
                                         {"@system_id", instance.System_id },
-                                        { "@run_time", instance.Run_Time }
+                                        { "@pages", instance.Pages }
                     },
                     message: out string message2
                 );
@@ -194,7 +188,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message2);
 
                 // Return value
-                statusResponse = new StatusResponse("Cd edited successfully");
+                statusResponse = new StatusResponse("EBook edited successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -221,7 +215,7 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM DVD WHERE system_id = @system_id",
+                        commandText: "DELETE FROM ebook WHERE system_id = @system_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@system_id", systemId },
@@ -233,7 +227,7 @@ namespace DatabaseLibrary.Helpers
 
                 rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM physical_media WHERE system_id = @system_id",
+                        commandText: "DELETE FROM digital_media WHERE system_id = @system_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@system_id", systemId },
@@ -268,7 +262,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Retrieves an instance.
         /// </summary>
-        public static DVD_db Get(int systemId,
+        public static EBook_db Get(int systemId,
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -295,7 +289,7 @@ namespace DatabaseLibrary.Helpers
 
                 table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM physical_media WHERE system_id = @system_id",
+                        commandText: "SELECT * FROM digital_media WHERE system_id = @system_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@system_id", systemId },
@@ -307,15 +301,12 @@ namespace DatabaseLibrary.Helpers
 
                 row = table.Rows[0];
 
-                string libraryAddress = row["library_address"].ToString();
-                int? borrowerId = (int)row["Borrower_id"];
-                DateTime? dateOfCheckOut = (DateTime)row["date_of_check_out"];
-                DateTime? dueDate = (DateTime)row["due_date"];
+                string link = row["link"].ToString();
 
 
                 table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM DVD WHERE system_id = @system_id",
+                        commandText: "SELECT * FROM ebook WHERE system_id = @system_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@system_id", systemId },
@@ -328,22 +319,19 @@ namespace DatabaseLibrary.Helpers
                 row = table.Rows[0];
 
                 // Parse data
-                DVD_db instance = new DVD_db
+                EBook_db instance = new EBook_db
                             (
                                 systemId: systemId,
                                 genre: genre,
                                 publishingDate: publishingDate,
                                 authorId: authorId,
                                 title: title,
-                                libraryAddress: libraryAddress,
-                                borrowerId: borrowerId,
-                                dateOfCheckOut: dateOfCheckOut,
-                                dueDate: dueDate,
-                                runTime: (int)row["run_time"]
+                                link: link,
+                                pages: (int)row["pages"]
                             );
 
                 // Return value
-                statusResponse = new StatusResponse("DVD has been retrieved successfully.");
+                statusResponse = new StatusResponse("Media has been retrieved successfully.");
                 return instance;
             }
             catch (Exception exception)
@@ -358,7 +346,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Retrieves a list of instances.
         /// </summary>
-        public static List<DVD_db> GetCollection(
+        public static List<EBook_db> GetCollection(
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -366,7 +354,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM media INNER JOIN physical_media ON media.system_id = physical_media.system_id INNER JOIN cd ON media.system_id = book.system_id",
+                        commandText: "SELECT * FROM media INNER JOIN digital_media ON media.system_id = digital_media.system_id INNER JOIN ebook ON media.system_id = book.system_id",
                         parameters: new Dictionary<string, object>()
                         {
 
@@ -377,25 +365,22 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Parse data
-                List<DVD_db> instances = new List<DVD_db>();
+                List<EBook_db> instances = new List<EBook_db>();
                 foreach (DataRow row in table.Rows)
-                    instances.Add(new DVD_db
+                    instances.Add(new EBook_db
                             (
                                 systemId: (int)row["System_id"],
                                 genre: row["Genre"].ToString(),
                                 publishingDate: (DateTime)row["publishing_date"],
                                 authorId: (int)row["author_id"],
                                 title: row["title"].ToString(),
-                                libraryAddress: row["library_address"].ToString(),
-                                borrowerId: (int)row["Borrower_id"],
-                                dateOfCheckOut: (DateTime)row["date_of_check_out"],
-                                dueDate: (DateTime)row["due_date"],
-                                runTime: (int)row["run_time"]
+                                link: row["link"].ToString(),
+                                pages: (int)row["pages"]
                             )
                         );
 
                 // Return value
-                statusResponse = new StatusResponse("Cd list has been retrieved successfully.");
+                statusResponse = new StatusResponse("EBook list has been retrieved successfully.");
                 return instances;
             }
             catch (Exception exception)

@@ -46,10 +46,9 @@ namespace DatabaseLibrary.Helpers
                         commandText: "INSERT INTO media (Genre, Author_id, Title) values (@genre, @author_id, @title)",
                         parameters: new Dictionary<string, object>()
                         {
-                            { "@genre", instance.Library_address },
-                            { "@author_id", instance.Borrower_id },
-                            { "@title", instance.Date_of_check_out },
-                            { "@due_date", instance.Due_date }
+                            { "@genre", instance.Genre },
+                            { "@author_id", instance.Author_id },
+                            { "@title", instance.Title },
                         },
                         message: out string message2
                     );
