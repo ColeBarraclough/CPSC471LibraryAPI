@@ -56,6 +56,23 @@ namespace DatabaseLibrary.Helpers
                 if (rowsAffected == -1)
                     throw new Exception(message);
 
+                // Get from database
+                DataTable table = context.ExecuteDataQueryCommand
+                    (
+                        commandText: "SELECT LAST_INSERT_ID();",
+                        parameters: new Dictionary<string, object>()
+                        {
+
+                        },
+                        message: out string getMessage
+                    );
+                if (table == null)
+                    throw new Exception(getMessage);
+
+                DataRow row = table.Rows[0];
+
+                instance.Card_id = Convert.ToInt32(row[0]);
+
                 // Return value
                 statusResponse = new StatusResponse("Customer added successfully");
                 return instance;
