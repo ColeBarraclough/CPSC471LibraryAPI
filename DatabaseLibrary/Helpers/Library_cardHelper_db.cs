@@ -15,7 +15,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Adds a new instance into the database.
         /// </summary>
-        public static Library_card_db Add(int id_no, string issuer_address, DateTime date_of_expiration,
+        public static Library_card_db Add(string issuer_address, DateTime date_of_expiration,
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -132,7 +132,7 @@ namespace DatabaseLibrary.Helpers
             try
             {
                 // Validate
-                if (id_no < 0)
+                if (id_no < 0 || id_no == null)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a card id.");
 
 
@@ -174,6 +174,49 @@ namespace DatabaseLibrary.Helpers
                         parameters: new Dictionary<string, object>()
                         {
                             {"@id_no", id_no },
+                        },
+                        message: out string message
+                    );
+                if (table == null)
+                    throw new Exception(message);
+
+                DataRow row = table.Rows[0];
+
+                // Parse data
+                Library_card_db instance = new Library_card_db
+                            (
+                                id_no: (int)row["Id_no"],
+                                issuer_address: row["Issuer_address"].ToString(),
+                                date_of_expiration: (DateTime)row["Date_of_expiration"]
+                            );
+
+                // Return value
+                statusResponse = new StatusResponse("Library_card has been retrieved successfully.");
+                return instance;
+            }
+            catch (Exception exception)
+            {
+                statusResponse = new StatusResponse(exception);
+                return null;
+            }
+        }
+
+
+        /// <summary>
+        /// Retrieves an instance.
+        /// </summary>
+        public static Library_card_db Get(string issuer_address,
+            DbContext context, out StatusResponse statusResponse)
+        {
+            try
+            {
+                // Get from database
+                DataTable table = context.ExecuteDataQueryCommand
+                    (
+                        commandText: "SELECT * FROM Library_card WHERE issuer_address = @issuer_address",
+                        parameters: new Dictionary<string, object>()
+                        {
+                            {"@issuer_address", issuer_address },
                         },
                         message: out string message
                     );

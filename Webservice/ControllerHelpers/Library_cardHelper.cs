@@ -40,7 +40,7 @@ namespace Webservice.ControllerHelpers
 
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Add(0, issuer_address, date_of_expiration,
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Add(issuer_address, date_of_expiration,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
@@ -58,6 +58,7 @@ namespace Webservice.ControllerHelpers
             statusCode = statusResponse.StatusCode;
             return response;
         }
+
 
         /// <summary>
         /// Edits a Library_card.
@@ -100,7 +101,7 @@ namespace Webservice.ControllerHelpers
             DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            int id_no = (data.ContainsKey("id_no")) ? data.GetValue("cardid_no_id").Value<int>() : -1;
+            int id_no = (data.ContainsKey("id_no")) ? data.GetValue("id_no").Value<int>() : -1;
 
             // Add instance to database
             DatabaseLibrary.Helpers.Library_cardHelper_db.Delete(id_no, context, out StatusResponse statusResponse);
@@ -133,11 +134,38 @@ namespace Webservice.ControllerHelpers
         DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            int cardId = (int) id;
+            int id_no = (int) id;
 
 
             // Get instances from database
-            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Get(cardId,
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Get(id_no,
+                context, out StatusResponse statusResponse);
+
+            // Convert to business logic objects
+            var instance = Convert(dbInstance);
+
+            // Get rid of detailed error message (when requested)
+            if (statusResponse.StatusCode == HttpStatusCode.InternalServerError
+                && !includeDetailedErrors)
+                statusResponse.Message = "Something went wrong while retrieving the Library_card";
+
+            // Return response
+            var response = new ResponseMessage
+                (
+                    instance != null,
+                    statusResponse.Message,
+                    instance
+                );
+            statusCode = statusResponse.StatusCode;
+            return response;
+        }
+
+        public static ResponseMessage Get(string? issuer_address,
+DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
+        {
+
+            // Get instances from database
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Get(issuer_address,
                 context, out StatusResponse statusResponse);
 
             // Convert to business logic objects
