@@ -29,7 +29,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (pages > 0)
+                if (pages < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of pages.");
 
                 // Generate a new instance
@@ -73,18 +73,7 @@ namespace DatabaseLibrary.Helpers
                 instance.System_id = Convert.ToInt32(row[0]);
 
 
-                rowsAffected = context.ExecuteNonQueryCommand
-                    (
-                        commandText: "INSERT INTO book (System_id, Pages) values (@system_id, @pages)",
-                        parameters: new Dictionary<string, object>()
-                        {
-                            { "@system_id", instance.System_id },
-                            { "@pages", instance.Pages }
-                        },
-                        message: out string message
-                    );
-                if (rowsAffected == -1)
-                    throw new Exception(message);
+
 
                 rowsAffected = context.ExecuteNonQueryCommand
                     (
@@ -92,7 +81,7 @@ namespace DatabaseLibrary.Helpers
                         parameters: new Dictionary<string, object>()
                         {
                                             { "@system_id", instance.System_id },
-                                            { "@library_id", instance.Library_address },
+                                            { "@library_address", instance.Library_address },
                                             { "@borrower_id", instance.Borrower_id },
                                             { "@date_of_check_out", instance.Date_of_check_out },
                                             { "@due_date", instance.Due_date }
@@ -102,10 +91,24 @@ namespace DatabaseLibrary.Helpers
                 if (rowsAffected == -1)
                     throw new Exception(message1);
 
+                
+                rowsAffected = context.ExecuteNonQueryCommand
+                    (
+                        commandText: "INSERT INTO book (System_id, Pages) values (@system_id, @pages)",
+                        parameters: new Dictionary<string, object>()
+                        {
+                                            { "@system_id", instance.System_id },
+                                            { "@pages", instance.Pages }
+                        },
+                        message: out string message
+                    );
+                if (rowsAffected == -1)
+                    throw new Exception(message);
+                
 
 
                 // Return value
-                statusResponse = new StatusResponse("Customer added successfully");
+                statusResponse = new StatusResponse("Book added successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -135,7 +138,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (pages > 0)
+                if (pages < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of pages.");
 
                 // Generate a new instance
@@ -343,7 +346,7 @@ namespace DatabaseLibrary.Helpers
                             );
 
                 // Return value
-                statusResponse = new StatusResponse("Customer has been retrieved successfully.");
+                statusResponse = new StatusResponse("Book has been retrieved successfully.");
                 return instance;
             }
             catch (Exception exception)

@@ -55,7 +55,7 @@ namespace Webservice.Controllers
         [Route("library_card")]
         public ResponseMessage GetLibrary_card(int? id_no)
         {
-            if (id_no < 0)
+            if (id_no == null)
             {
                 var response = Library_cardHelper.GetCollection(
                 context: Database.DbContext,

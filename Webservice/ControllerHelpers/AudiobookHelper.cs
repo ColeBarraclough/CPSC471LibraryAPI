@@ -40,11 +40,11 @@ namespace Webservice.ControllerHelpers
             string genre = (data.ContainsKey("genre")) ? data.GetValue("genre").Value<string>() : null;
             DateTime publishingDate = (data.ContainsKey("publishing_date")) ? data.GetValue("publishing_date").Value<DateTime>() : new DateTime();
             int authorId = (data.ContainsKey("author_id")) ? data.GetValue("author_id").Value<int>() : -1;
-            int pages = (data.ContainsKey("pages")) ? data.GetValue("pages").Value<int>() : -1;
+            int run_time = (data.ContainsKey("run_time")) ? data.GetValue("run_time").Value<int>() : -1;
 
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.AudiobookHelper_db.Add(0, title, genre, publishingDate, authorId, link, pages,
+            var dbInstance = DatabaseLibrary.Helpers.AudiobookHelper_db.Add(0, title, genre, publishingDate, authorId, link, run_time,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
@@ -77,10 +77,10 @@ namespace Webservice.ControllerHelpers
             string genre = (data.ContainsKey("genre")) ? data.GetValue("genre").Value<string>() : null;
             DateTime publishingDate = (data.ContainsKey("publishing_date")) ? data.GetValue("publishing_date").Value<DateTime>() : new DateTime();
             int authorId = (data.ContainsKey("author_id")) ? data.GetValue("author_id").Value<int>() : -1;
-            int pages = (data.ContainsKey("pages")) ? data.GetValue("pages").Value<int>() : -1;
+            int run_time = (data.ContainsKey("run_time")) ? data.GetValue("run_time").Value<int>() : -1;
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.AudiobookHelper_db.Edit(systemId, title, genre, publishingDate, authorId, link, pages,
+            var dbInstance = DatabaseLibrary.Helpers.AudiobookHelper_db.Edit(systemId, title, genre, publishingDate, authorId, link, run_time,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)

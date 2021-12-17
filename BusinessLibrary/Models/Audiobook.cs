@@ -68,7 +68,7 @@ namespace BusinessLibrary.Models
         /// <summary>
         /// Publishing date of Audiobook.
         /// </summary>
-        [JsonProperty(PropertyName = "pulblishing_date")]
+        [JsonProperty(PropertyName = "publishing_date")]
         public DateTime PublishingDate { get; set; }
 
         /// <summary>
