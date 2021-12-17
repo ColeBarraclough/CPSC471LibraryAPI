@@ -9,13 +9,13 @@ using System.Text;
 
 namespace DatabaseLibrary.Helpers
 {
-    public class ReccomendsHelper_db
+    public class RecommendsHelper_db
     {
 
         /// <summary>
         /// Adds a new instance into the database.
         /// </summary>
-        public static Reccomends_db Add(string reccomendation_address, int media_id, string reccomendation_card,
+        public static Recommends_db Add(string recommendation_address, int media_id, string recommendation_card,
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -23,26 +23,26 @@ namespace DatabaseLibrary.Helpers
                 // Validate
                 if (media_id < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a media id.");
-                if (string.IsNullOrEmpty(reccomendation_address?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a reccomendation address.");
-                if (string.IsNullOrEmpty(reccomendation_card?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a reccomendation card.");
+                if (string.IsNullOrEmpty(recommendation_address?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a recommendation address.");
+                if (string.IsNullOrEmpty(recommendation_card?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a recommendation card.");
 
                 // Generate a new instance
-                Reccomends_db instance = new Reccomends_db
+                Recommends_db instance = new Recommends_db
                     (
-                        reccomendation_address, media_id, reccomendation_card
+                        recommendation_address, media_id, recommendation_card
                     );
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO reccomends (Reccomendation_address, Media_id, Reccomendation_card) values (@reccomendation_address, @media_id, @reccomendation_card)",
+                        commandText: "INSERT INTO recommends (Recommendation_address, Media_id, Recommendation_card) values (@recommendation_address, @media_id, @recommendation_card)",
                         parameters: new Dictionary<string, object>()
                         {
-                            { "@reccomendation_address", instance.Reccomendation_address },
+                            { "@recommendation_address", instance.Recommendation_address },
                             { "@media_id", instance.Media_id },
-                            { "@reccomendation_card", instance.Reccomendation_card }
+                            { "@recommendation_card", instance.Recommendation_card }
                         },
                         message: out string message
                     );
@@ -67,7 +67,7 @@ namespace DatabaseLibrary.Helpers
                 //instance.Card_id = Convert.ToInt32(row[0]);
 
                 // Return value
-                statusResponse = new StatusResponse("Reccomends added successfully");
+                statusResponse = new StatusResponse("Recommends added successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -80,7 +80,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Edits an instance in the database
         /// </summary>
-        public static Reccomends_db Edit(string reccomendation_address, int media_id, string reccomendation_card,
+        public static Recommends_db Edit(string recommendation_address, int media_id, string recommendation_card,
            DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -88,26 +88,26 @@ namespace DatabaseLibrary.Helpers
                 // Validate
                 if (media_id < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a card id.");
-                if (string.IsNullOrEmpty(reccomendation_address?.Trim()))
+                if (string.IsNullOrEmpty(recommendation_address?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a first name.");
-                if (string.IsNullOrEmpty(reccomendation_card?.Trim()))
+                if (string.IsNullOrEmpty(recommendation_card?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a last name.");
 
                 // Generate a new instance
-                Reccomends_db instance = new Reccomends_db
+                Recommends_db instance = new Recommends_db
                     (
-                        reccomendation_address, media_id, reccomendation_card
+                        recommendation_address, media_id, recommendation_card
                     );
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "UPDATE reccomends SET Reccomendation_address = @reccomendation_address, Media_id = @media_id, Reccomendation_card = @reccomendation_card",
+                        commandText: "UPDATE recommends SET Recommendation_address = @recommendation_address, Media_id = @media_id, Recommendation_card = @recommendation_card",
                         parameters: new Dictionary<string, object>()
                         {
-                            {"@reccomendation_address", instance.Reccomendation_address },
+                            {"@recommendation_address", instance.Recommendation_address },
                             { "@media_id", instance.Media_id },
-                            { "@reccomendation_card", instance.Reccomendation_card }
+                            { "@recommendation_card", instance.Recommendation_card }
                         },
                         message: out string message
                     );
@@ -115,7 +115,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Return value
-                statusResponse = new StatusResponse("Reccomends edited successfully");
+                statusResponse = new StatusResponse("Recommends edited successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -130,25 +130,25 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Deletes an instance in the database
         /// </summary>
-        public static void Delete(string reccomendation_address, string reccomendation_card, DbContext context, out StatusResponse statusResponse)
+        public static void Delete(string recommendation_address, string recommendation_card, DbContext context, out StatusResponse statusResponse)
         {
             try
             {
                 // Validate
-                if (reccomendation_address == "")
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a reccomendation address.");
-                if (reccomendation_card == "")
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a reccomendation_card.");
+                if (recommendation_address == "")
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a recommendation address.");
+                if (recommendation_card == "")
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a recommendation_card.");
 
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM reccomends WHERE reccomendation_address = @reccomendation_address, reccomendation_card = @reccomendation_card",
+                        commandText: "DELETE FROM recommends WHERE recommendation_address = @recommendation_address, recommendation_card = @recommendation_card",
                         parameters: new Dictionary<string, object>()
                         {
-                            {"@reccomendation_address", reccomendation_address },
-                            {"@reccomendation_card", reccomendation_card }
+                            {"@recommendation_address", recommendation_address },
+                            {"@recommendation_card", recommendation_card }
                         },
                         message: out string message
                     );
@@ -156,7 +156,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Return value
-                statusResponse = new StatusResponse("Reccomends deleted successfully");
+                statusResponse = new StatusResponse("Recommends deleted successfully");
             }
             catch (Exception exception)
             {
@@ -168,7 +168,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Retrieves an instance.
         /// </summary>
-        public static Reccomends_db Get(string reccomendation_address, string reccomendation_card,
+        public static Recommends_db Get(string recommendation_address, string recommendation_card,
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -176,11 +176,11 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM reccomends WHERE reccomendation_address = @reccomendation_address, reccomendation_card = @reccomendation_card",
+                        commandText: "SELECT * FROM recommends WHERE recommendation_address = @recommendation_address, recommendation_card = @recommendation_card",
                         parameters: new Dictionary<string, object>()
                         {
-                            {"@reccomendation_address", reccomendation_address },
-                            {"@reccomendation_card", reccomendation_card }
+                            {"@recommendation_address", recommendation_address },
+                            {"@recommendation_card", recommendation_card }
                         },
                         message: out string message
                     );
@@ -190,15 +190,15 @@ namespace DatabaseLibrary.Helpers
                 DataRow row = table.Rows[0];
 
                 // Parse data
-                Reccomends_db instance = new Reccomends_db
+                Recommends_db instance = new Recommends_db
                             (
-                                reccomendation_address: row["Reccomendation_address"].ToString(),
+                                recommendation_address: row["Recommendation_address"].ToString(),
                                 media_id: (int)row["Media_id"],
-                                reccomendation_card: row["Reccomendation_card"].ToString()
+                                recommendation_card: row["Recommendation_card"].ToString()
                             );
 
                 // Return value
-                statusResponse = new StatusResponse("Reccomends has been retrieved successfully.");
+                statusResponse = new StatusResponse("Recommends has been retrieved successfully.");
                 return instance;
             }
             catch (Exception exception)
@@ -213,7 +213,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Retrieves a list of instances.
         /// </summary>
-        public static List<Reccomends_db> GetCollection(
+        public static List<Recommends_db> GetCollection(
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -221,7 +221,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM reccomends",
+                        commandText: "SELECT * FROM recommends",
                         parameters: new Dictionary<string, object>()
                         {
 
@@ -232,18 +232,18 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Parse data
-                List<Reccomends_db> instances = new List<Reccomends_db>();
+                List<Recommends_db> instances = new List<Recommends_db>();
                 foreach (DataRow row in table.Rows)
-                    instances.Add(new Reccomends_db
+                    instances.Add(new Recommends_db
                             (
-                                reccomendation_address: row["Reccomendation_address"].ToString(),
+                                recommendation_address: row["Recommendation_address"].ToString(),
                                 media_id: (int)row["Media_id"],
-                                reccomendation_card: row["Reccomendation_card"].ToString()
+                                recommendation_card: row["Recommendation_card"].ToString()
                             )
                         );
 
                 // Return value
-                statusResponse = new StatusResponse("Reccomends list has been retrieved successfully.");
+                statusResponse = new StatusResponse("Recommends list has been retrieved successfully.");
                 return instances;
             }
             catch (Exception exception)
