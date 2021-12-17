@@ -108,7 +108,7 @@ namespace Webservice.ControllerHelpers
             DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            int employee_id = (data.ContainsKey("employee_id")) ? data.GetValue("employee_id").Value<int>() : -1;
+            string employee_id = (data.ContainsKey("employee_id")) ? data.GetValue("employee_id").Value<string>() : null;
 
             // Add instance to database
             DatabaseLibrary.Helpers.LibrarianHelper_db.Delete(employee_id, context, out StatusResponse statusResponse);

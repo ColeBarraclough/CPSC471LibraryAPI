@@ -95,7 +95,7 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "UPDATE reservation SET return_date = @return_date, pickup_date = @pickup_date WHERE librarian_id = @librarian_id and media_id = @media_id, and customer_card_id = @customer_card_Id",
+                        commandText: "UPDATE reservation SET return_date = @return_date, pickup_date = @pickup_date WHERE librarian_id = @librarian_id and media_id = @media_id and customer_card_id = @customer_card_Id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@return_date", instance.Return_date },
@@ -141,7 +141,7 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM reservation WHERE librarian_id = @librarian_id and media_id = @media_id, and customer_card_id = @customer_card_Id",
+                        commandText: "DELETE FROM reservation WHERE librarian_id = @librarian_id and media_id = @media_id and customer_card_id = @customer_card_Id",
                         parameters: new Dictionary<string, object>()
                         {
                             { "@librarian_id", librarianId },
@@ -174,7 +174,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM reservation WHERE librarian_id = @librarian_id and media_id = @media_id, and customer_card_id = @customer_card_Id",
+                        commandText: "SELECT * FROM reservation WHERE librarian_id = @librarian_id and media_id = @media_id and customer_card_id = @customer_card_Id",
                         parameters: new Dictionary<string, object>()
                         {
                             { "@librarian_id", librarianId },
