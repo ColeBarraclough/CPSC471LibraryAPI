@@ -15,7 +15,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Adds a new instance into the database.
         /// </summary>
-        public static Library_card_db Add(string issuer_address, DateTime date_of_expiration,
+        public static Library_card_db Add(int id_no, string issuer_address, DateTime date_of_expiration,
             DbContext context, out StatusResponse statusResponse)
         {
             try
