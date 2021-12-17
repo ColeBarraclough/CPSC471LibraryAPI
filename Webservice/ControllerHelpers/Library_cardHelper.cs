@@ -60,6 +60,7 @@ namespace Webservice.ControllerHelpers
             return response;
         }
 
+
         /// <summary>
         /// Edits a Library_card.
         /// </summary>
@@ -134,11 +135,38 @@ namespace Webservice.ControllerHelpers
         DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            int cardId = (int) id;
+            int id_no = (int) id;
 
 
             // Get instances from database
-            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Get(cardId,
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Get(id_no,
+                context, out StatusResponse statusResponse);
+
+            // Convert to business logic objects
+            var instance = Convert(dbInstance);
+
+            // Get rid of detailed error message (when requested)
+            if (statusResponse.StatusCode == HttpStatusCode.InternalServerError
+                && !includeDetailedErrors)
+                statusResponse.Message = "Something went wrong while retrieving the Library_card";
+
+            // Return response
+            var response = new ResponseMessage
+                (
+                    instance != null,
+                    statusResponse.Message,
+                    instance
+                );
+            statusCode = statusResponse.StatusCode;
+            return response;
+        }
+
+        public static ResponseMessage Get(string? issuer_address,
+DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
+        {
+
+            // Get instances from database
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Get(issuer_address,
                 context, out StatusResponse statusResponse);
 
             // Convert to business logic objects

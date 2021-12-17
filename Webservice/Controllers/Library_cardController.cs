@@ -53,17 +53,9 @@ namespace Webservice.Controllers
         // Gets an instance.
         [HttpGet]
         [Route("library_card")]
-        public ResponseMessage GetLibrary_card(int? id_no)
+        public ResponseMessage GetLibrary_card(int? id_no, string? issuer_address)
         {
-            if (id_no == null)
-            {
-                var response = Library_cardHelper.GetCollection(
-                context: Database.DbContext,
-                statusCode: out HttpStatusCode statusCode,
-                includeDetailedErrors: HostingEnvironment.IsDevelopment());
-                HttpContext.Response.StatusCode = (int)statusCode;
-                return response;
-            } else
+            if (issuer_address == null && id_no != null)
             {
                 var response = Library_cardHelper.Get(id_no,
                 context: Database.DbContext,
@@ -71,8 +63,23 @@ namespace Webservice.Controllers
                 includeDetailedErrors: HostingEnvironment.IsDevelopment());
                 HttpContext.Response.StatusCode = (int)statusCode;
                 return response;
+            } else if (id_no == null && issuer_address != null) 
+            {
+                var response = Library_cardHelper.Get(issuer_address,
+                context: Database.DbContext,
+                statusCode: out HttpStatusCode statusCode,
+                includeDetailedErrors: HostingEnvironment.IsDevelopment());
+                HttpContext.Response.StatusCode = (int)statusCode;
+                return response;
+            } else
+            {
+                var response = Library_cardHelper.GetCollection(
+                context: Database.DbContext,
+                statusCode: out HttpStatusCode statusCode,
+                includeDetailedErrors: HostingEnvironment.IsDevelopment());
+                HttpContext.Response.StatusCode = (int)statusCode;
+                return response;
             }
-            
         }
 
         
@@ -84,7 +91,6 @@ namespace Webservice.Controllers
         [Route("library_card")]
         public ResponseMessage AddLibrary_card([FromBody] JObject data)
         {
-
             var response = Library_cardHelper.Add(data,
                 context: Database.DbContext,
                 statusCode: out HttpStatusCode statusCode,
