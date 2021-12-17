@@ -366,7 +366,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM media INNER JOIN physical_media ON media.system_id = physical_media.system_id INNER JOIN cd ON media.system_id = book.system_id",
+                        commandText: "SELECT * FROM media INNER JOIN physical_media ON media.system_id = physical_media.system_id INNER JOIN cd ON media.system_id = cd.system_id",
                         parameters: new Dictionary<string, object>()
                         {
 

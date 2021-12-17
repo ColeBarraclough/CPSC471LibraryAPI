@@ -94,9 +94,9 @@ namespace DatabaseLibrary.Helpers
                 if (string.IsNullOrEmpty(name?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a last name.");
                 if (string.IsNullOrEmpty(website_address?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a password.");
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a url.");
                 if (string.IsNullOrEmpty(admin_id?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a address.");
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide an id.");
 
                 // Generate a new instance
                 Library_db instance = new Library_db
@@ -107,7 +107,7 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "UPDATE Library SET Address = @address, Name = @name, Website_address = @website_address",
+                        commandText: "UPDATE Library SET Name = @name, Website_address = @website_address WHERE address = @address",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@address", instance.Address },

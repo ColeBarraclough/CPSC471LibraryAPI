@@ -37,12 +37,12 @@ namespace Webservice.ControllerHelpers
             // Extract paramters
             string address = (data.ContainsKey("address")) ? data.GetValue("address").Value<string>() : null;
             string name = (data.ContainsKey("name")) ? data.GetValue("name").Value<string>() : null;
-            string website_address = (data.ContainsKey("website_address")) ? data.GetValue("website_address").Value<string>() : null;
+            string website_address = (data.ContainsKey("website_url")) ? data.GetValue("website_url").Value<string>() : null;
             string admin_id = (data.ContainsKey("admin_id")) ? data.GetValue("admin_id").Value<string>() : null;
 
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.LibraryHelper_db.Add("", name, website_address, admin_id,
+            var dbInstance = DatabaseLibrary.Helpers.LibraryHelper_db.Add(address, name, website_address, admin_id,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
@@ -71,7 +71,7 @@ namespace Webservice.ControllerHelpers
             // Extract paramters
             string address = (data.ContainsKey("address")) ? data.GetValue("address").Value<string>() : null;
             string name = (data.ContainsKey("name")) ? data.GetValue("name").Value<string>() : null;
-            string website_address = (data.ContainsKey("website_address")) ? data.GetValue("website_address").Value<string>() : null;
+            string website_address = (data.ContainsKey("website_url")) ? data.GetValue("website_url").Value<string>() : null;
             string admin_id = (data.ContainsKey("admin_id")) ? data.GetValue("admin_id").Value<string>() : null;
 
             // Add instance to database
