@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Webservice.ControllerHelpers
 {
-    public class AuthorHelper
+    public class Library_cardHelper
     {
 
         #region Converters
@@ -18,39 +18,35 @@ namespace Webservice.ControllerHelpers
         /// <summary>
         /// Converts database models to a business logic object.
         /// </summary>
-        public static BusinessLibrary.Models.Author Convert(Author_db instance)
+        public static BusinessLibrary.Models.Library_card Convert(Library_card_db instance)
         {
             if (instance == null)
                 return null;
-            return new BusinessLibrary.Models.Author(instance.Author_id, instance.First_name, instance.Last_name, instance.Date_of_birth);
+            return new BusinessLibrary.Models.Library_card(instance.Id_no, instance.Issuer_address, instance.Date_of_expiration);
         }
 
         #endregion
 
         /// <summary>
-        /// Signs up a Author.
+        /// Signs up a Library_card.
         /// </summary>
         /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
         public static ResponseMessage Add(JObject data,
             DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            string author_id = (data.ContainsKey("author_id")) ? data.GetValue("author_id").Value<string>() : null;
-            string firstName = (data.ContainsKey("first_name")) ? data.GetValue("first_name").Value<string>() : null;
-            string lastName = (data.ContainsKey("last_name")) ? data.GetValue("last_name").Value<string>() : null;
-            string password = (data.ContainsKey("password")) ? data.GetValue("password").Value<string>() : null;
-            string address = (data.ContainsKey("address")) ? data.GetValue("address").Value<string>() : null;
-            DateTime dateOfBirth = (data.ContainsKey("date_of_birth")) ? data.GetValue("date_of_birth").Value<DateTime>() : new DateTime();
+            string issuer_address = (data.ContainsKey("issuer_address")) ? data.GetValue("issuer_address").Value<string>() : null;
+            DateTime date_of_expiration = (data.ContainsKey("date_of_expiration")) ? data.GetValue("date_of_expiration").Value<DateTime>() : new DateTime();
 
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.AuthorHelper_db.Add(author_id, firstName, lastName, dateOfBirth,
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Add(0, issuer_address, date_of_expiration,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
             if (statusResponse.StatusCode == HttpStatusCode.InternalServerError
                 && !includeDetailedErrors)
-                statusResponse.Message = "Something went wrong while adding a new Author.";
+                statusResponse.Message = "Something went wrong while adding a new Library_card.";
 
             // Return response
             var response = new ResponseMessage
@@ -64,26 +60,25 @@ namespace Webservice.ControllerHelpers
         }
 
         /// <summary>
-        /// Edits a Author.
+        /// Edits a Library_card.
         /// </summary>
         /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
         public static ResponseMessage Edit(JObject data,
             DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            string author_id = (data.ContainsKey("author_id")) ? data.GetValue("author_id").Value<string>() : null;
-            string firstName = (data.ContainsKey("first_name")) ? data.GetValue("first_name").Value<string>() : null;
-            string lastName = (data.ContainsKey("last_name")) ? data.GetValue("last_name").Value<string>() : null;
-            DateTime dateOfBirth = (data.ContainsKey("date_of_birth")) ? data.GetValue("date_of_birth").Value<DateTime>() : new DateTime();
+            int id_no = (data.ContainsKey("id_no")) ? data.GetValue("id_no").Value<int>() : -1;
+            string issuer_address = (data.ContainsKey("issuer_address")) ? data.GetValue("issuer_address").Value<string>() : null;
+            DateTime date_of_expiration = (data.ContainsKey("date_of_expiration")) ? data.GetValue("date_of_expiration").Value<DateTime>() : new DateTime();
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.AuthorHelper_db.Edit(author_id, firstName, lastName, dateOfBirth,
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Edit(id_no, issuer_address, date_of_expiration,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
             if (statusResponse.StatusCode == HttpStatusCode.InternalServerError
                 && !includeDetailedErrors)
-                statusResponse.Message = "Something went wrong while editing a Author.";
+                statusResponse.Message = "Something went wrong while editing a Library_card.";
 
             // Return response
             var response = new ResponseMessage
@@ -98,24 +93,24 @@ namespace Webservice.ControllerHelpers
         }
 
         /// <summary>
-        /// Deletes a Author.
+        /// Deletes a Library_card.
         /// </summary>
         /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
         public static ResponseMessage Delete(JObject data,
             DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            string author_id = (data.ContainsKey("author_id")) ? data.GetValue("author_id").Value<string>() : null;
+            int id_no = (data.ContainsKey("id_no")) ? data.GetValue("cardid_no_id").Value<int>() : -1;
 
             // Add instance to database
-            DatabaseLibrary.Helpers.AuthorHelper_db.Delete(author_id, context, out StatusResponse statusResponse);
+            DatabaseLibrary.Helpers.Library_cardHelper_db.Delete(id_no, context, out StatusResponse statusResponse);
 
             bool failed = false;
 
             // Get rid of detailed internal server error message (when requested)
             if (statusResponse.StatusCode == HttpStatusCode.InternalServerError
                 && !includeDetailedErrors) {
-                statusResponse.Message = "Something went wrong while deleting a Author.";
+                statusResponse.Message = "Something went wrong while deleting a Library_card.";
                 failed = true;
             }
 
@@ -131,18 +126,18 @@ namespace Webservice.ControllerHelpers
 
 
         /// <summary>
-        /// Gets a Author.
+        /// Gets a Library_card.
         /// </summary>
         /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
-        public static ResponseMessage Get(string? id,
+        public static ResponseMessage Get(int? id,
         DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
-            string author_id = id;
+            int cardId = (int) id;
 
 
             // Get instances from database
-            var dbInstance = DatabaseLibrary.Helpers.AuthorHelper_db.Get(author_id,
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Get(cardId,
                 context, out StatusResponse statusResponse);
 
             // Convert to business logic objects
@@ -151,7 +146,7 @@ namespace Webservice.ControllerHelpers
             // Get rid of detailed error message (when requested)
             if (statusResponse.StatusCode == HttpStatusCode.InternalServerError
                 && !includeDetailedErrors)
-                statusResponse.Message = "Something went wrong while retrieving the Author";
+                statusResponse.Message = "Something went wrong while retrieving the Library_card";
 
             // Return response
             var response = new ResponseMessage
@@ -166,14 +161,14 @@ namespace Webservice.ControllerHelpers
 
 
         /// <summary>
-        /// Gets list of Authors.
+        /// Gets list of Library_cards.
         /// </summary>
         /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
         public static ResponseMessage GetCollection(
         DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Get instances from database
-            var dbInstances = DatabaseLibrary.Helpers.AuthorHelper_db.GetCollection(
+            var dbInstances = DatabaseLibrary.Helpers.Library_cardHelper_db.GetCollection(
                 context, out StatusResponse statusResponse);
 
             // Convert to business logic objects
@@ -182,7 +177,7 @@ namespace Webservice.ControllerHelpers
             // Get rid of detailed error message (when requested)
             if (statusResponse.StatusCode == HttpStatusCode.InternalServerError
                 && !includeDetailedErrors)
-                statusResponse.Message = "Something went wrong while retrieving the Authors";
+                statusResponse.Message = "Something went wrong while retrieving the Library_cards";
 
             // Return response
             var response = new ResponseMessage

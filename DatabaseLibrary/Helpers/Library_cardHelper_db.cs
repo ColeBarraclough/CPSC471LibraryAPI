@@ -9,43 +9,37 @@ using System.Text;
 
 namespace DatabaseLibrary.Helpers
 {
-    public class AuthorHelper_db
+    public class Library_cardHelper_db
     {
 
         /// <summary>
         /// Adds a new instance into the database.
         /// </summary>
-        public static Author_db Add(string author_id, string firstName, string lastName, DateTime dateOfBirth,
+        public static Library_card_db Add(int id_no, string issuer_address, DateTime date_of_expiration,
             DbContext context, out StatusResponse statusResponse)
         {
             try
             {
-                // Validate
-                if (string.IsNullOrEmpty(author_id?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a password.");
-                if (string.IsNullOrEmpty(firstName?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a first name.");
-                if (string.IsNullOrEmpty(lastName?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a last name.");
-                if (dateOfBirth == default(DateTime))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a date of birth.");
+                if (string.IsNullOrEmpty(issuer_address?.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide an issuer address.");
+                if (date_of_expiration == default(DateTime))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a date of expiration.");
 
                 // Generate a new instance
-                Author_db instance = new Author_db
+                Library_card_db instance = new Library_card_db
                     (
-                        author_id, firstName, lastName, dateOfBirth
+                        id_no: 0, //This can be ignored is PK in your DB is auto increment
+                        issuer_address, date_of_expiration
                     );
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO Author (Author_id, First_name, Last_name, Date_of_birth) values (@author_id, @first_name, @last_name, @date_of_birth)",
+                        commandText: "INSERT INTO Library_card (Issuer_Address, Date_of_expiration) values (@issuer_address, @date_of_expiration)",
                         parameters: new Dictionary<string, object>()
                         {
-                            { "@author_id", instance.Author_id },
-                            { "@first_name", instance.First_name },
-                            { "@last_name", instance.Last_name },
-                            { "@date_of_birth", instance.Date_of_birth }
+                            { "@issuer_address", instance.Issuer_address },
+                            { "@date_of_expiration", instance.Date_of_expiration }
                         },
                         message: out string message
                     );
@@ -67,10 +61,10 @@ namespace DatabaseLibrary.Helpers
 
                 DataRow row = table.Rows[0];
 
-                //instance.Card_id = Convert.ToInt32(row[0]);
+                instance.Id_no = Convert.ToInt32(row[0]);
 
                 // Return value
-                statusResponse = new StatusResponse("Author added successfully");
+                statusResponse = new StatusResponse("Library_card added successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -83,37 +77,34 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Edits an instance in the database
         /// </summary>
-        public static Author_db Edit(string author_id, string firstName, string lastName, DateTime dateOfBirth,
+        public static Library_card_db Edit(int id_no, string issuer_address, DateTime date_of_expiration,
            DbContext context, out StatusResponse statusResponse)
         {
             try
             {
                 // Validate
-                if (string.IsNullOrEmpty(author_id?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a password.");
-                if (string.IsNullOrEmpty(firstName?.Trim()))
+                if (id_no < 0)
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a card id.");
+                if (string.IsNullOrEmpty(issuer_address?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a first name.");
-                if (string.IsNullOrEmpty(lastName?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a last name.");
-                if (dateOfBirth == default(DateTime))
+                if (date_of_expiration == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a date of birth.");
 
                 // Generate a new instance
-                Author_db instance = new Author_db
+                Library_card_db instance = new Library_card_db
                     (
-                        author_id, firstName, lastName, dateOfBirth
+                        id_no, issuer_address, date_of_expiration
                     );
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "UPDATE Author SET First_name = @first_name, Last_name = @last_name, Date_of_birth = @date_of_birth WHERE Author_id = @author_id",
+                        commandText: "UPDATE Library_card SET Issuer_address = @issuer_address, Date_of_expiration = @date_of_expiration WHERE Id_no = @id_no",
                         parameters: new Dictionary<string, object>()
                         {
-                            {"@author_id", instance.Author_id },
-                            { "@first_name", instance.First_name },
-                            { "@last_name", instance.Last_name },
-                            { "@date_of_birth", instance.Date_of_birth }
+                            {"@id_no", instance.Id_no },
+                            { "@issuer_address", instance.Issuer_address },
+                            { "@date_of_expiration", instance.Date_of_expiration }
                         },
                         message: out string message
                     );
@@ -121,7 +112,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Return value
-                statusResponse = new StatusResponse("Author edited successfully");
+                statusResponse = new StatusResponse("Library_card edited successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -136,22 +127,22 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Deletes an instance in the database
         /// </summary>
-        public static void Delete(string author_id, DbContext context, out StatusResponse statusResponse)
+        public static void Delete(int id_no, DbContext context, out StatusResponse statusResponse)
         {
             try
             {
                 // Validate
-                if (author_id == "")
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide an author id.");
+                if (id_no < 0)
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a card id.");
 
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM Author WHERE author_id = @author_id",
+                        commandText: "DELETE FROM Library_card WHERE id_no = @id_no",
                         parameters: new Dictionary<string, object>()
                         {
-                            {"@author_id", author_id },
+                            {"@id_no", id_no},
                         },
                         message: out string message
                     );
@@ -159,7 +150,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Return value
-                statusResponse = new StatusResponse("Author deleted successfully");
+                statusResponse = new StatusResponse("Library_card deleted successfully");
             }
             catch (Exception exception)
             {
@@ -171,7 +162,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Retrieves an instance.
         /// </summary>
-        public static Author_db Get(string author_id,
+        public static Library_card_db Get(int id_no,
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -179,10 +170,10 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM Author WHERE author_id = @author_id",
+                        commandText: "SELECT * FROM Library_card WHERE id_no = @id_no",
                         parameters: new Dictionary<string, object>()
                         {
-                            {"@author_id", author_id },
+                            {"@id_no", id_no },
                         },
                         message: out string message
                     );
@@ -192,16 +183,15 @@ namespace DatabaseLibrary.Helpers
                 DataRow row = table.Rows[0];
 
                 // Parse data
-                Author_db instance = new Author_db
+                Library_card_db instance = new Library_card_db
                             (
-                                author_id: row["Author_id"].ToString(),
-                                firstName: row["First_name"].ToString(),
-                                lastName: row["Last_name"].ToString(),
-                                dateOfBirth: (DateTime)row["Date_of_birth"]
+                                id_no: (int)row["Id_no"],
+                                issuer_address: row["Issuer_address"].ToString(),
+                                date_of_expiration: (DateTime)row["Date_of_expiration"]
                             );
 
                 // Return value
-                statusResponse = new StatusResponse("Author has been retrieved successfully.");
+                statusResponse = new StatusResponse("Library_card has been retrieved successfully.");
                 return instance;
             }
             catch (Exception exception)
@@ -216,7 +206,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Retrieves a list of instances.
         /// </summary>
-        public static List<Author_db> GetCollection(
+        public static List<Library_card_db> GetCollection(
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -224,7 +214,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM Author",
+                        commandText: "SELECT * FROM Library_card",
                         parameters: new Dictionary<string, object>()
                         {
 
@@ -235,19 +225,18 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Parse data
-                List<Author_db> instances = new List<Author_db>();
+                List<Library_card_db> instances = new List<Library_card_db>();
                 foreach (DataRow row in table.Rows)
-                    instances.Add(new Author_db
+                    instances.Add(new Library_card_db
                             (
-                                author_id: row["Author_id"].ToString(),
-                                firstName: row["First_name"].ToString(),
-                                lastName: row["Last_name"].ToString(),
-                                dateOfBirth: (DateTime)row["Date_of_birth"]
+                                id_no: (int)row["Id_no"],
+                                issuer_address: row["Issuer_address"].ToString(),
+                                date_of_expiration: (DateTime)row["Date_of_expiration"]
                             )
                         );
 
                 // Return value
-                statusResponse = new StatusResponse("Author list has been retrieved successfully.");
+                statusResponse = new StatusResponse("Library_card list has been retrieved successfully.");
                 return instances;
             }
             catch (Exception exception)
