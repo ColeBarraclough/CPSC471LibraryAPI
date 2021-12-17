@@ -29,7 +29,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (length > 0)
+                if (length < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a length.");
 
                 // Generate a new instance
@@ -73,6 +73,23 @@ namespace DatabaseLibrary.Helpers
                 instance.System_id = Convert.ToInt32(row[0]);
 
 
+
+                rowsAffected = context.ExecuteNonQueryCommand
+                    (
+                        commandText: "INSERT INTO physical_media (System_id, Library_address, Borrower_id, Date_of_check_out, Due_date) values (@system_id, @library_address, @borrower_id, @date_of_check_out, @due_date)",
+                        parameters: new Dictionary<string, object>()
+                        {
+                                            { "@system_id", instance.System_id },
+                                            { "@library_address", instance.Library_address },
+                                            { "@borrower_id", instance.Borrower_id },
+                                            { "@date_of_check_out", instance.Date_of_check_out },
+                                            { "@due_date", instance.Due_date }
+                        },
+                        message: out string message1
+                    );
+                if (rowsAffected == -1)
+                    throw new Exception(message1);
+
                 rowsAffected = context.ExecuteNonQueryCommand
                     (
                         commandText: "INSERT INTO cd (System_id, Length) values (@system_id, @length)",
@@ -85,24 +102,6 @@ namespace DatabaseLibrary.Helpers
                     );
                 if (rowsAffected == -1)
                     throw new Exception(message);
-
-                rowsAffected = context.ExecuteNonQueryCommand
-                    (
-                        commandText: "INSERT INTO physical_media (System_id, Library_address, Borrower_id, Date_of_check_out, Due_date) values (@system_id, @library_address, @borrower_id, @date_of_check_out, @due_date)",
-                        parameters: new Dictionary<string, object>()
-                        {
-                                            { "@system_id", instance.System_id },
-                                            { "@library_id", instance.Library_address },
-                                            { "@borrower_id", instance.Borrower_id },
-                                            { "@date_of_check_out", instance.Date_of_check_out },
-                                            { "@due_date", instance.Due_date }
-                        },
-                        message: out string message1
-                    );
-                if (rowsAffected == -1)
-                    throw new Exception(message1);
-
-
 
                 // Return value
                 statusResponse = new StatusResponse("Cd added successfully");
@@ -135,7 +134,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (length > 0)
+                if (length < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of length.");
 
                 // Generate a new instance
@@ -366,7 +365,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM media INNER JOIN physical_media ON media.system_id = physical_media.system_id INNER JOIN cd ON media.system_id = book.system_id",
+                        commandText: "SELECT * FROM media INNER JOIN physical_media ON media.system_id = physical_media.system_id INNER JOIN cd ON media.system_id = cd.system_id",
                         parameters: new Dictionary<string, object>()
                         {
 

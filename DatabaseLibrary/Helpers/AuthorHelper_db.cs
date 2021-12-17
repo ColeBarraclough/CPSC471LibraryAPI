@@ -21,8 +21,6 @@ namespace DatabaseLibrary.Helpers
             try
             {
                 // Validate
-                if (string.IsNullOrEmpty(author_id?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a password.");
                 if (string.IsNullOrEmpty(firstName?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a first name.");
                 if (string.IsNullOrEmpty(lastName?.Trim()))
@@ -39,10 +37,9 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO Author (Author_id, First_name, Last_name, Date_of_birth) values (@author_id, @first_name, @last_name, @date_of_birth)",
+                        commandText: "INSERT INTO Author (First_name, Last_name, Date_of_birth) values (@first_name, @last_name, @date_of_birth)",
                         parameters: new Dictionary<string, object>()
                         {
-                            { "@author_id", instance.Author_id },
                             { "@first_name", instance.First_name },
                             { "@last_name", instance.Last_name },
                             { "@date_of_birth", instance.Date_of_birth }
@@ -67,7 +64,7 @@ namespace DatabaseLibrary.Helpers
 
                 DataRow row = table.Rows[0];
 
-                //instance.Card_id = Convert.ToInt32(row[0]);
+                instance.Author_id = row[0].ToString();
 
                 // Return value
                 statusResponse = new StatusResponse("Author added successfully");

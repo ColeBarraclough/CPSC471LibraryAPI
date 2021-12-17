@@ -29,7 +29,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (runTime > 0)
+                if (runTime < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a run time.");
 
                 // Generate a new instance
@@ -73,18 +73,7 @@ namespace DatabaseLibrary.Helpers
                 instance.System_id = Convert.ToInt32(row[0]);
 
 
-                rowsAffected = context.ExecuteNonQueryCommand
-                    (
-                        commandText: "INSERT INTO DVD (System_id, Run_time) values (@system_id, @run_time)",
-                        parameters: new Dictionary<string, object>()
-                        {
-                            { "@system_id", instance.System_id },
-                            { "@length", instance.Run_Time }
-                        },
-                        message: out string message
-                    );
-                if (rowsAffected == -1)
-                    throw new Exception(message);
+
 
                 rowsAffected = context.ExecuteNonQueryCommand
                     (
@@ -92,7 +81,7 @@ namespace DatabaseLibrary.Helpers
                         parameters: new Dictionary<string, object>()
                         {
                                             { "@system_id", instance.System_id },
-                                            { "@library_id", instance.Library_address },
+                                            { "@library_address", instance.Library_address },
                                             { "@borrower_id", instance.Borrower_id },
                                             { "@date_of_check_out", instance.Date_of_check_out },
                                             { "@due_date", instance.Due_date }
@@ -102,7 +91,18 @@ namespace DatabaseLibrary.Helpers
                 if (rowsAffected == -1)
                     throw new Exception(message1);
 
-
+                rowsAffected = context.ExecuteNonQueryCommand
+                    (
+                        commandText: "INSERT INTO DVD (System_id, Run_time) values (@system_id, @run_time)",
+                        parameters: new Dictionary<string, object>()
+                        {
+                            { "@system_id", instance.System_id },
+                            { "@run_time", instance.Run_Time }
+                        },
+                        message: out string message
+                    );
+                if (rowsAffected == -1)
+                    throw new Exception(message);
 
                 // Return value
                 statusResponse = new StatusResponse("DVD added successfully");
@@ -135,7 +135,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (runTime > 0)
+                if (runTime < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of run time.");
 
                 // Generate a new instance
@@ -194,7 +194,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message2);
 
                 // Return value
-                statusResponse = new StatusResponse("Cd edited successfully");
+                statusResponse = new StatusResponse("DVD edited successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -366,7 +366,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM media INNER JOIN physical_media ON media.system_id = physical_media.system_id INNER JOIN cd ON media.system_id = book.system_id",
+                        commandText: "SELECT * FROM media INNER JOIN physical_media ON media.system_id = physical_media.system_id INNER JOIN dvd ON media.system_id = dvd.system_id",
                         parameters: new Dictionary<string, object>()
                         {
 
@@ -395,7 +395,7 @@ namespace DatabaseLibrary.Helpers
                         );
 
                 // Return value
-                statusResponse = new StatusResponse("Cd list has been retrieved successfully.");
+                statusResponse = new StatusResponse("DVD list has been retrieved successfully.");
                 return instances;
             }
             catch (Exception exception)

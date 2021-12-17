@@ -29,7 +29,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a link.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (runTime > 0)
+                if (runTime < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a run time.");
 
                 // Generate a new instance
@@ -73,18 +73,6 @@ namespace DatabaseLibrary.Helpers
                 instance.System_id = Convert.ToInt32(row[0]);
 
 
-                rowsAffected = context.ExecuteNonQueryCommand
-                    (
-                        commandText: "INSERT INTO audiobook (System_id, Run_Time) values (@system_id, @run_time)",
-                        parameters: new Dictionary<string, object>()
-                        {
-                            { "@system_id", instance.System_id },
-                            { "@run_time", instance.Run_Time }
-                        },
-                        message: out string message
-                    );
-                if (rowsAffected == -1)
-                    throw new Exception(message);
 
                 rowsAffected = context.ExecuteNonQueryCommand
                     (
@@ -99,7 +87,18 @@ namespace DatabaseLibrary.Helpers
                 if (rowsAffected == -1)
                     throw new Exception(message1);
 
-
+                rowsAffected = context.ExecuteNonQueryCommand
+                    (
+                        commandText: "INSERT INTO audio_book (System_id, Run_Time) values (@system_id, @run_time)",
+                        parameters: new Dictionary<string, object>()
+                        {
+                            { "@system_id", instance.System_id },
+                            { "@run_time", instance.Run_Time }
+                        },
+                        message: out string message
+                    );
+                if (rowsAffected == -1)
+                    throw new Exception(message);
 
                 // Return value
                 statusResponse = new StatusResponse("Audiobook added successfully");
@@ -132,7 +131,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (runTime > 0)
+                if (runTime < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a run time.");
 
                 // Generate a new instance
@@ -176,7 +175,7 @@ namespace DatabaseLibrary.Helpers
 
                 rowsAffected = context.ExecuteNonQueryCommand
                 (
-                    commandText: "UPDATE audiobook SET run_time = @run_time WHERE system_id = @system_id",
+                    commandText: "UPDATE audio_book SET run_time = @run_time WHERE system_id = @system_id",
                     parameters: new Dictionary<string, object>()
                     {
                                         {"@system_id", instance.System_id },
@@ -215,7 +214,7 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM audiobook WHERE system_id = @system_id",
+                        commandText: "DELETE FROM audio_book WHERE system_id = @system_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@system_id", systemId },
@@ -306,7 +305,7 @@ namespace DatabaseLibrary.Helpers
 
                 table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM audiobook WHERE system_id = @system_id",
+                        commandText: "SELECT * FROM audio_book WHERE system_id = @system_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@system_id", systemId },
@@ -354,7 +353,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM media INNER JOIN digital_media ON media.system_id = digital_media.system_id INNER JOIN audiobook ON media.system_id = book.system_id",
+                        commandText: "SELECT * FROM media INNER JOIN digital_media ON media.system_id = digital_media.system_id INNER JOIN audio_book ON media.system_id = audio_book.system_id",
                         parameters: new Dictionary<string, object>()
                         {
 

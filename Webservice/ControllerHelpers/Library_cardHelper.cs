@@ -35,12 +35,13 @@ namespace Webservice.ControllerHelpers
             DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
             // Extract paramters
+            int id_no = (data.ContainsKey("id_no")) ? data.GetValue("id_no").Value<int>() : -1;
             string issuer_address = (data.ContainsKey("issuer_address")) ? data.GetValue("issuer_address").Value<string>() : null;
             DateTime date_of_expiration = (data.ContainsKey("date_of_expiration")) ? data.GetValue("date_of_expiration").Value<DateTime>() : new DateTime();
 
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Add(issuer_address, date_of_expiration,
+            var dbInstance = DatabaseLibrary.Helpers.Library_cardHelper_db.Add(id_no, issuer_address, date_of_expiration,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)

@@ -43,7 +43,7 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO librarian (First_name, Last_name, Password, Address, Date_of_birth) values (@first_name, @last_name, @phone_no, @address, @date_of_birth)",
+                        commandText: "INSERT INTO librarian (First_name, Last_name, Password, phone_no, Address, social_insurance_no, library_address) values (@first_name, @last_name, @password, @phone_no, @address, @social_insurance_no, @library_address)",
                         parameters: new Dictionary<string, object>()
                         {
                             { "@first_name", instance.First_name },
@@ -76,7 +76,7 @@ namespace DatabaseLibrary.Helpers
                 //instance.Employee_id;
 
                 // Return value
-                statusResponse = new StatusResponse("Customer added successfully");
+                statusResponse = new StatusResponse("Librarian added successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -108,7 +108,7 @@ namespace DatabaseLibrary.Helpers
                 if (string.IsNullOrEmpty(social_insurance_no?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a social insurance number.");
                 if (string.IsNullOrEmpty(library_address?.Trim()))
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a social insurance number.");
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a library address.");
 
                 // Generate a new instance
                 Librarian_db instance = new Librarian_db
@@ -119,15 +119,16 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "UPDATE customer SET First_name = @first_name, Last_name = @last_name, Password = @password, Address = @address, Date_of_birth = @date_of_birth WHERE card_id = @card_id",
+                        commandText: "UPDATE librarian SET First_name = @first_name, Last_name = @last_name, Password = @password, Address = @address, Phone_no = @phone_no, Social_insurance_no = @social_insurance_no, library_address = @library_address WHERE employee_id = @employee_id",
                         parameters: new Dictionary<string, object>()
                         {
-                            {"@card_id", instance.Employee_id },
+                            {"@employee_id", instance.Employee_id },
                             { "@first_name", instance.First_name },
                             { "@last_name", instance.Last_name },
-                            { "@password", instance.Phone_no },
+                            { "@phone_no", instance.Phone_no },
                             { "@address", instance.Address },
-                            { "@date_of_birth", instance.Social_insurance_no }
+                            { "@social_insurance_no", instance.Social_insurance_no },
+                            { "@library_address", instance.Library_address }
                         },
                         message: out string message
                     );
@@ -135,7 +136,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Return value
-                statusResponse = new StatusResponse("Customer edited successfully");
+                statusResponse = new StatusResponse("Librarian edited successfully");
                 return instance;
             }
             catch (Exception exception)
@@ -150,22 +151,22 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Deletes an instance in the database
         /// </summary>
-        public static void Delete(int cardId, DbContext context, out StatusResponse statusResponse)
+        public static void Delete(string employee_id, DbContext context, out StatusResponse statusResponse)
         {
             try
             {
                 // Validate
-                if (cardId < 0)
-                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a card id.");
+                if (string.IsNullOrEmpty(employee_id.Trim()))
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a employee id.");
 
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM customer WHERE card_id = @card_id",
+                        commandText: "DELETE FROM librarian WHERE employee_id = @employee_id",
                         parameters: new Dictionary<string, object>()
                         {
-                            {"@card_id", cardId },
+                            {"@employee_id", employee_id },
                         },
                         message: out string message
                     );
@@ -173,7 +174,7 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message);
 
                 // Return value
-                statusResponse = new StatusResponse("Customer deleted successfully");
+                statusResponse = new StatusResponse("Librarian deleted successfully");
             }
             catch (Exception exception)
             {
@@ -193,7 +194,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM customer WHERE card_id = @card_id",
+                        commandText: "SELECT * FROM librarian WHERE employee_id = @employee_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@employee_id", employee_id },
@@ -213,7 +214,7 @@ namespace DatabaseLibrary.Helpers
                                 lastName: row["Last_name"].ToString(),
                                 phone_no: row["Phone_no"].ToString(),
                                 address: row["Address"].ToString(),
-                                social_insurance_no: row["Social_insurance_number"].ToString(),
+                                social_insurance_no: row["Social_insurance_no"].ToString(),
                                 library_address: row["library_address"].ToString()
                             );
 
@@ -267,7 +268,7 @@ namespace DatabaseLibrary.Helpers
                         );
 
                 // Return value
-                statusResponse = new StatusResponse("Customer list has been retrieved successfully.");
+                statusResponse = new StatusResponse("Librarian list has been retrieved successfully.");
                 return instances;
             }
             catch (Exception exception)

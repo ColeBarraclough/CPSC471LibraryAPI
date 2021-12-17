@@ -53,9 +53,9 @@ namespace Webservice.Controllers
         // Gets an instance.
         [HttpGet]
         [Route("reservation")]
-        public ResponseMessage GetReservation(int? library_id, int? media_id, int? customer_card_id)
+        public ResponseMessage GetReservation(int? librarian_id, int? media_id, int? customer_card_id)
         {
-            if (library_id == null || media_id == null || customer_card_id == null)
+            if (librarian_id == null || media_id == null || customer_card_id == null)
             {
                 var response = ReservationHelper.GetCollection(
                 context: Database.DbContext,
@@ -66,7 +66,7 @@ namespace Webservice.Controllers
             }
             else
             {
-                var response = ReservationHelper.Get(library_id, media_id, customer_card_id,
+                var response = ReservationHelper.Get(librarian_id, media_id, customer_card_id,
                 context: Database.DbContext,
                 statusCode: out HttpStatusCode statusCode,
                 includeDetailedErrors: HostingEnvironment.IsDevelopment());

@@ -29,7 +29,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a link.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (pages > 0)
+                if (pages < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of pages.");
 
                 // Generate a new instance
@@ -73,18 +73,7 @@ namespace DatabaseLibrary.Helpers
                 instance.System_id = Convert.ToInt32(row[0]);
 
 
-                rowsAffected = context.ExecuteNonQueryCommand
-                    (
-                        commandText: "INSERT INTO ebook (System_id, Pages) values (@system_id, @pages)",
-                        parameters: new Dictionary<string, object>()
-                        {
-                            { "@system_id", instance.System_id },
-                            { "@pages", instance.Pages }
-                        },
-                        message: out string message
-                    );
-                if (rowsAffected == -1)
-                    throw new Exception(message);
+
 
                 rowsAffected = context.ExecuteNonQueryCommand
                     (
@@ -99,7 +88,18 @@ namespace DatabaseLibrary.Helpers
                 if (rowsAffected == -1)
                     throw new Exception(message1);
 
-
+                rowsAffected = context.ExecuteNonQueryCommand
+                    (
+                        commandText: "INSERT INTO ebook (System_id, Pages) values (@system_id, @pages)",
+                        parameters: new Dictionary<string, object>()
+                        {
+                            { "@system_id", instance.System_id },
+                            { "@pages", instance.Pages }
+                        },
+                        message: out string message
+                    );
+                if (rowsAffected == -1)
+                    throw new Exception(message);
 
                 // Return value
                 statusResponse = new StatusResponse("EBook added successfully");
@@ -132,7 +132,7 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a genre.");
                 if (publishingDate == default(DateTime))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a publishing date.");
-                if (pages > 0)
+                if (pages < 0)
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide amount of pages.");
 
                 // Generate a new instance
@@ -354,7 +354,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM media INNER JOIN digital_media ON media.system_id = digital_media.system_id INNER JOIN ebook ON media.system_id = book.system_id",
+                        commandText: "SELECT * FROM media INNER JOIN digital_media ON media.system_id = digital_media.system_id INNER JOIN ebook ON media.system_id = ebook.system_id",
                         parameters: new Dictionary<string, object>()
                         {
 

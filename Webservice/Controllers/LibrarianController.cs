@@ -55,7 +55,7 @@ namespace Webservice.Controllers
         [Route("librarian")]
         public ResponseMessage GetLibrarian(string? employee_id)
         {
-            if (employee_id == "")
+            if (employee_id == null)
             {
                 var response = LibrarianHelper.GetCollection(
                 context: Database.DbContext,

@@ -144,7 +144,7 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM recommends WHERE recommendation_address = @recommendation_address, recommendation_card = @recommendation_card",
+                        commandText: "DELETE FROM recommends WHERE recommendation_address = @recommendation_address and recommendation_card = @recommendation_card",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@recommendation_address", recommendation_address },
@@ -176,7 +176,7 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM recommends WHERE recommendation_address = @recommendation_address, recommendation_card = @recommendation_card",
+                        commandText: "SELECT * FROM recommends WHERE recommendation_address = @recommendation_address and recommendation_card = @recommendation_card",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@recommendation_address", recommendation_address },

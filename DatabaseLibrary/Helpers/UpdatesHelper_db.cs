@@ -112,7 +112,7 @@ namespace DatabaseLibrary.Helpers
                 // Parse data
                 Updates_db instance = new Updates_db
                             (
-                                librarianId: (int) row["libraria_id"],
+                                librarianId: (int) row["librarian_id"],
                                 mediaId: (int) row["media_id"]
                             );
 

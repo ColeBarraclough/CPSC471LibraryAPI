@@ -53,9 +53,9 @@ namespace Webservice.Controllers
         // Gets an instance.
         [HttpGet]
         [Route("library")]
-        public ResponseMessage GetLibrary(string? address)
+        public ResponseMessage GetLibrary(string address)
         {
-            if (address == "")
+            if (address == null)
             {
                 var response = LibraryHelper.GetCollection(
                 context: Database.DbContext,

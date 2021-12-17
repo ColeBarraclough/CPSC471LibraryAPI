@@ -52,10 +52,10 @@ namespace Webservice.Controllers
 
         // Gets an instance.
         [HttpGet]
-        [Route("recommends")]
-        public ResponseMessage GetRecommends(string? recommendation_address, string? reccomendation_card)
+        [Route("recommendation")]
+        public ResponseMessage GetRecommends(string? recommendation_address, string? recommendation_card)
         {
-            if (recommendation_address == null || reccomendation_card == null)
+            if (recommendation_address == null || recommendation_card == null)
             {
                 var response = RecommendsHelper.GetCollection(
                 context: Database.DbContext,
@@ -65,7 +65,7 @@ namespace Webservice.Controllers
                 return response;
             } else
             {
-                var response = RecommendsHelper.Get(recommendation_address, reccomendation_card,
+                var response = RecommendsHelper.Get(recommendation_address, recommendation_card,
                 context: Database.DbContext,
                 statusCode: out HttpStatusCode statusCode,
                 includeDetailedErrors: HostingEnvironment.IsDevelopment());
@@ -81,7 +81,7 @@ namespace Webservice.Controllers
 
         // Adds a new instance.
         [HttpPost]
-        [Route("recommends")]
+        [Route("recommendation")]
         public ResponseMessage AddRecommends([FromBody] JObject data)
         {
 
@@ -98,7 +98,7 @@ namespace Webservice.Controllers
 
         // Edits an instance.
         [HttpPut]
-        [Route("recommends")]
+        [Route("recommendation")]
         public ResponseMessage EditRecommends([FromBody] JObject data)
         {
             var response = RecommendsHelper.Edit(data,
@@ -112,7 +112,7 @@ namespace Webservice.Controllers
 
         // Deletes an instance
         [HttpDelete]
-        [Route("recommends")]
+        [Route("recommendation")]
         public ResponseMessage DeleteRecommends([FromBody] JObject data)
         {
             var response = RecommendsHelper.Delete(data,
