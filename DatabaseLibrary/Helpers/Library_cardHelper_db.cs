@@ -20,6 +20,8 @@ namespace DatabaseLibrary.Helpers
         {
             try
             {
+                if (id_no <= 0)
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide an id_no.");
                 if (string.IsNullOrEmpty(issuer_address?.Trim()))
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide an issuer address.");
                 if (date_of_expiration == default(DateTime))
@@ -28,16 +30,17 @@ namespace DatabaseLibrary.Helpers
                 // Generate a new instance
                 Library_card_db instance = new Library_card_db
                     (
-                        id_no: 0, //This can be ignored is PK in your DB is auto increment
+                        id_no, //This can be ignored is PK in your DB is auto increment
                         issuer_address, date_of_expiration
                     );
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO Library_card (Issuer_Address, Date_of_expiration) values (@issuer_address, @date_of_expiration)",
+                        commandText: "INSERT INTO Library_card (Id_no, Issuer_Address, Date_of_expiration) values (@id_no, @issuer_address, @date_of_expiration)",
                         parameters: new Dictionary<string, object>()
                         {
+                            { "@id_no", instance.Id_no },
                             { "@issuer_address", instance.Issuer_address },
                             { "@date_of_expiration", instance.Date_of_expiration }
                         },
@@ -46,22 +49,6 @@ namespace DatabaseLibrary.Helpers
                 if (rowsAffected == -1)
                     throw new Exception(message);
 
-                // Get from database
-                DataTable table = context.ExecuteDataQueryCommand
-                    (
-                        commandText: "SELECT LAST_INSERT_ID();",
-                        parameters: new Dictionary<string, object>()
-                        {
-
-                        },
-                        message: out string getMessage
-                    );
-                if (table == null)
-                    throw new Exception(getMessage);
-
-                DataRow row = table.Rows[0];
-
-                instance.Id_no = Convert.ToInt32(row[0]);
 
                 // Return value
                 statusResponse = new StatusResponse("Library_card added successfully");
