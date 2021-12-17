@@ -19,7 +19,7 @@ namespace DatabaseLibrary.Models
         /// <summary>
         /// Fields constructor.
         /// </summary>
-        public Librarian_db(string employee_id, string firstName, string lastName, string phone_no, string address, string social_insurance_no, string library_address)
+        public Librarian_db(string employee_id, string firstName, string lastName, string phone_no, string address, string social_insurance_no, string library_address, string password)
         {
             Employee_id = employee_id;
             First_name = firstName;
@@ -28,6 +28,7 @@ namespace DatabaseLibrary.Models
             Address = address;
             Social_insurance_no = social_insurance_no;
             Library_address = library_address;
+            Password = password;
         }
 
         #endregion
@@ -68,6 +69,11 @@ namespace DatabaseLibrary.Models
         /// Library that librarian works at.
         /// </summary>
         public string Library_address { get; set; }
+
+        /// <summary>
+        /// Library that librarian works at.
+        /// </summary>
+        public string Password { get; set; }
         #endregion
 
     }

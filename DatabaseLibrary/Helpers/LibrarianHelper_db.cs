@@ -15,7 +15,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Adds a new instance into the database.
         /// </summary>
-        public static Librarian_db Add(string employee_id, string firstName, string lastName, string phone_no, string address, string social_insurance_no, string library_address,
+        public static Librarian_db Add(string employee_id, string firstName, string lastName, string phone_no, string address, string social_insurance_no, string library_address, string password,
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -37,13 +37,13 @@ namespace DatabaseLibrary.Helpers
                 // Generate a new instance
                 Librarian_db instance = new Librarian_db
                     (
-                        employee_id, firstName, lastName, phone_no, address, social_insurance_no, library_address
+                        employee_id, firstName, lastName, phone_no, address, social_insurance_no, library_address, password
                     );
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO librarian (First_name, Last_name, Password, phone_no, Address, social_insurance_no, library_address) values (@first_name, @last_name, @password, @phone_no, @address, @social_insurance_no, @library_address)",
+                        commandText: "INSERT INTO librarian (First_name, Last_name, phone_no, Address, social_insurance_no, library_address, password) values (@first_name, @last_name, @phone_no, @address, @social_insurance_no, @library_address, @password)",
                         parameters: new Dictionary<string, object>()
                         {
                             { "@first_name", instance.First_name },
@@ -51,7 +51,8 @@ namespace DatabaseLibrary.Helpers
                             { "@phone_no", instance.Phone_no },
                             { "@address", instance.Address },
                             { "@social_insurance_no", instance.Social_insurance_no },
-                            { "@library_address", instance.Library_address }
+                            { "@library_address", instance.Library_address },
+                            { "@password", instance.Password }
                         },
                         message: out string message
                     );
@@ -73,7 +74,7 @@ namespace DatabaseLibrary.Helpers
 
                 DataRow row = table.Rows[0];
 
-                //instance.Employee_id;
+                instance.Employee_id = row[0].ToString();
 
                 // Return value
                 statusResponse = new StatusResponse("Librarian added successfully");
@@ -89,7 +90,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Edits an instance in the database
         /// </summary>
-        public static Librarian_db Edit(string employee_id, string firstName, string lastName, string phone_no, string address, string social_insurance_no, string library_address,
+        public static Librarian_db Edit(string employee_id, string firstName, string lastName, string phone_no, string address, string social_insurance_no, string library_address, string password,
            DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -113,7 +114,7 @@ namespace DatabaseLibrary.Helpers
                 // Generate a new instance
                 Librarian_db instance = new Librarian_db
                     (
-                        employee_id, firstName, lastName, phone_no, address, social_insurance_no, library_address
+                        employee_id, firstName, lastName, phone_no, address, social_insurance_no, library_address, password
                     );
 
                 // Add to database
@@ -127,6 +128,7 @@ namespace DatabaseLibrary.Helpers
                             { "@last_name", instance.Last_name },
                             { "@phone_no", instance.Phone_no },
                             { "@address", instance.Address },
+                            { "@password", instance.Password },
                             { "@social_insurance_no", instance.Social_insurance_no },
                             { "@library_address", instance.Library_address }
                         },
@@ -215,7 +217,8 @@ namespace DatabaseLibrary.Helpers
                                 phone_no: row["Phone_no"].ToString(),
                                 address: row["Address"].ToString(),
                                 social_insurance_no: row["Social_insurance_no"].ToString(),
-                                library_address: row["library_address"].ToString()
+                                library_address: row["library_address"].ToString(),
+                                password: row["password"].ToString()
                             );
 
                 // Return value
@@ -263,7 +266,8 @@ namespace DatabaseLibrary.Helpers
                                 phone_no: row["Phone_no"].ToString(),
                                 address: row["Address"].ToString(),
                                 social_insurance_no: row["Social_insurance_no"].ToString(),
-                                library_address: row["Library_address"].ToString()
+                                library_address: row["Library_address"].ToString(),
+                                password: row["password"].ToString()
                             )
                         );
 

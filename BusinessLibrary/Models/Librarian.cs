@@ -22,7 +22,7 @@ namespace BusinessLibrary.Models
         /// <summary>
         /// Fields constructor.
         /// </summary>
-        public Librarian(string employee_id, string phone_no, string firstName, string lastName, string address, string social_insurance_no, string library_address)
+        public Librarian(string employee_id, string phone_no, string firstName, string lastName, string address, string social_insurance_no, string library_address, string password)
         {
             Employee_id = employee_id;
             FirstName = firstName;
@@ -31,6 +31,7 @@ namespace BusinessLibrary.Models
             Address = address;
             Social_insurance_no = social_insurance_no;
             Library_address = library_address;
+            Password = password;
 
         }
 
@@ -39,7 +40,7 @@ namespace BusinessLibrary.Models
         /// </summary>
         /// <param name="instance">The object to clone from.</param>
         public Librarian(Librarian instance)
-            : this(instance.Employee_id, instance.FirstName, instance.LastName, instance.Phone_no, instance.Address, instance.Social_insurance_no, instance.Library_address)
+            : this(instance.Employee_id, instance.FirstName, instance.LastName, instance.Phone_no, instance.Address, instance.Social_insurance_no, instance.Library_address, instance.Password)
         {
         }
 
@@ -88,6 +89,12 @@ namespace BusinessLibrary.Models
         /// </summary>
         [JsonProperty(PropertyName = "library_address")]
         public string Library_address { get; set; }
+
+        /// <summary>
+        /// FUll name of the customer.
+        /// </summary>
+        [JsonProperty(PropertyName = "password")]
+        public string Password { get; set; }
 
         [JsonProperty(PropertyName = "full_name")]
         public string FullName

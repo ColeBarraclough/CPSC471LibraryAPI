@@ -22,7 +22,7 @@ namespace Webservice.ControllerHelpers
         {
             if (instance == null)
                 return null;
-            return new BusinessLibrary.Models.Librarian(instance.Employee_id, instance.First_name, instance.Last_name, instance.Phone_no, instance.Address, instance.Social_insurance_no, instance.Library_address);
+            return new BusinessLibrary.Models.Librarian(instance.Employee_id, instance.Phone_no, instance.First_name, instance.Last_name, instance.Address, instance.Social_insurance_no, instance.Library_address, instance.Password);
         }
 
         #endregion
@@ -41,10 +41,11 @@ namespace Webservice.ControllerHelpers
             string address = (data.ContainsKey("address")) ? data.GetValue("address").Value<string>() : null;
             string social_insurance_no = (data.ContainsKey("social_insurance_no")) ? data.GetValue("social_insurance_no").Value<string>() : null;
             string library_address = (data.ContainsKey("library_address")) ? data.GetValue("library_address").Value<string>() : null;
+            string password = (data.ContainsKey("password")) ? data.GetValue("password").Value<string>() : null;
 
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.LibrarianHelper_db.Add("", firstName, lastName, phone_no, address, social_insurance_no, library_address,
+            var dbInstance = DatabaseLibrary.Helpers.LibrarianHelper_db.Add("", firstName, lastName, phone_no, address, social_insurance_no, library_address, password,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
@@ -78,9 +79,10 @@ namespace Webservice.ControllerHelpers
             string address = (data.ContainsKey("address")) ? data.GetValue("address").Value<string>() : null;
             string social_insurance_no = (data.ContainsKey("social_insurance_no")) ? data.GetValue("social_insurance_no").Value<string>() : null;
             string library_address = (data.ContainsKey("library_address")) ? data.GetValue("library_address").Value<string>() : null;
+            string password = (data.ContainsKey("password")) ? data.GetValue("password").Value<string>() : null;
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.LibrarianHelper_db.Edit(employee_id, firstName, lastName, phone_no, address, social_insurance_no, library_address,
+            var dbInstance = DatabaseLibrary.Helpers.LibrarianHelper_db.Edit(employee_id, firstName, lastName, phone_no, address, social_insurance_no, library_address, password,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
