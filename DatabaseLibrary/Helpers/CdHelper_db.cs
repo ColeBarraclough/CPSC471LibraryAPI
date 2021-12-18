@@ -43,12 +43,13 @@ namespace DatabaseLibrary.Helpers
 
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO media (Genre, Author_id, Title) values (@genre, @author_id, @title)",
+                        commandText: "INSERT INTO media (Genre, Author_id, Title, publishing_date) values (@genre, @author_id, @title, @publishing_date)",
                         parameters: new Dictionary<string, object>()
                         {
                             { "@genre", instance.Genre },
                             { "@author_id", instance.Author_id },
                             { "@title", instance.Title },
+                            { "@publishing_date", instance.Publishing_date }
                         },
                         message: out string message2
                     );
