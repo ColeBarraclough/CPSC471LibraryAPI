@@ -310,11 +310,16 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message1);
 
                 row = table.Rows[0];
-
+                int? borrowerId = null;
+                DateTime? dateOfCheckOut = null;
+                DateTime? dueDate = null;
                 string libraryAddress = row["library_address"].ToString();
-                int? borrowerId = (int)row["Borrower_id"];
-                DateTime? dateOfCheckOut = (DateTime)row["date_of_check_out"];
-                DateTime? dueDate = (DateTime)row["due_date"];
+                if (!row.IsNull("Borrower_id"))
+                    borrowerId = (int?)row["Borrower_id"];
+                if (!row.IsNull("date_of_check_out"))
+                    dateOfCheckOut = (DateTime?)row["date_of_check_out"];
+                if (!row.IsNull("due_date"))
+                    dueDate = (DateTime?)row["due_date"];
 
 
                 table = context.ExecuteDataQueryCommand
@@ -383,20 +388,31 @@ namespace DatabaseLibrary.Helpers
                 // Parse data
                 List<Book_db> instances = new List<Book_db>();
                 foreach (DataRow row in table.Rows)
+                {
+                    int? borrowerId = null;
+                    DateTime? dateOfCheckOut = null;
+                    DateTime? dueDate = null;
+                    if (!row.IsNull("Borrower_id"))
+                        borrowerId = (int?)row["Borrower_id"];
+                    if (!row.IsNull("date_of_check_out"))
+                        dateOfCheckOut = (DateTime?)row["date_of_check_out"];
+                    if (!row.IsNull("due_date"))
+                        dueDate = (DateTime?)row["due_date"];
                     instances.Add(new Book_db
                             (
-                                systemId: (int) row["System_id"],
+                                systemId: (int)row["System_id"],
                                 genre: row["Genre"].ToString(),
                                 publishingDate: (DateTime)row["publishing_date"],
-                                authorId: (int) row["author_id"],
+                                authorId: (int)row["author_id"],
                                 title: row["title"].ToString(),
                                 libraryAddress: row["library_address"].ToString(),
-                                borrowerId: (int) row["Borrower_id"],
-                                dateOfCheckOut: (DateTime)row["date_of_check_out"],
-                                dueDate: (DateTime)row["due_date"],
+                                borrowerId: borrowerId,
+                                dateOfCheckOut: dateOfCheckOut,
+                                dueDate: dueDate,
                                 pages: (int)row["pages"]
                             )
                         );
+                }
 
                 // Return value
                 statusResponse = new StatusResponse("Book list has been retrieved successfully.");

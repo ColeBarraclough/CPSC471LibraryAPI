@@ -306,11 +306,16 @@ namespace DatabaseLibrary.Helpers
                     throw new Exception(message1);
 
                 row = table.Rows[0];
-
+                int? borrowerId = null;
+                DateTime? dateOfCheckOut = null;
+                DateTime? dueDate = null;
                 string libraryAddress = row["library_address"].ToString();
-                int? borrowerId = (int)row["Borrower_id"];
-                DateTime? dateOfCheckOut = (DateTime)row["date_of_check_out"];
-                DateTime? dueDate = (DateTime)row["due_date"];
+                if (!row.IsNull("Borrower_id"))
+                    borrowerId = (int?)row["Borrower_id"];
+                if (!row.IsNull("date_of_check_out"))
+                    dateOfCheckOut = (DateTime?)row["date_of_check_out"];
+                if (!row.IsNull("due_date"))
+                    dueDate = (DateTime?)row["due_date"];
 
 
                 table = context.ExecuteDataQueryCommand
@@ -379,6 +384,16 @@ namespace DatabaseLibrary.Helpers
                 // Parse data
                 List<Cd_db> instances = new List<Cd_db>();
                 foreach (DataRow row in table.Rows)
+                {
+                    int? borrowerId = null;
+                    DateTime? dateOfCheckOut = null;
+                    DateTime? dueDate = null;
+                    if (!row.IsNull("Borrower_id"))
+                        borrowerId = (int?)row["Borrower_id"];
+                    if (!row.IsNull("date_of_check_out"))
+                        dateOfCheckOut = (DateTime?)row["date_of_check_out"];
+                    if (!row.IsNull("due_date"))
+                        dueDate = (DateTime?)row["due_date"];
                     instances.Add(new Cd_db
                             (
                                 systemId: (int)row["System_id"],
@@ -387,12 +402,13 @@ namespace DatabaseLibrary.Helpers
                                 authorId: (int)row["author_id"],
                                 title: row["title"].ToString(),
                                 libraryAddress: row["library_address"].ToString(),
-                                borrowerId: (int)row["Borrower_id"],
-                                dateOfCheckOut: (DateTime)row["date_of_check_out"],
-                                dueDate: (DateTime)row["due_date"],
+                                borrowerId: borrowerId,
+                                dateOfCheckOut: dateOfCheckOut,
+                                dueDate: dueDate,
                                 length: (int)row["length"]
                             )
                         );
+                }
 
                 // Return value
                 statusResponse = new StatusResponse("Cd list has been retrieved successfully.");

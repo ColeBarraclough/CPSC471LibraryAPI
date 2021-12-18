@@ -308,10 +308,17 @@ namespace DatabaseLibrary.Helpers
 
                 row = table.Rows[0];
 
+                row = table.Rows[0];
+                int? borrowerId = null;
+                DateTime? dateOfCheckOut = null;
+                DateTime? dueDate = null;
                 string libraryAddress = row["library_address"].ToString();
-                int? borrowerId = (int)row["Borrower_id"];
-                DateTime? dateOfCheckOut = (DateTime)row["date_of_check_out"];
-                DateTime? dueDate = (DateTime)row["due_date"];
+                if (!row.IsNull("Borrower_id"))
+                    borrowerId = (int?)row["Borrower_id"];
+                if (!row.IsNull("date_of_check_out"))
+                    dateOfCheckOut = (DateTime?)row["date_of_check_out"];
+                if (!row.IsNull("due_date"))
+                    dueDate = (DateTime?)row["due_date"];
 
 
                 table = context.ExecuteDataQueryCommand
@@ -380,20 +387,31 @@ namespace DatabaseLibrary.Helpers
                 // Parse data
                 List<DVD_db> instances = new List<DVD_db>();
                 foreach (DataRow row in table.Rows)
+                {
+                    int? borrowerId = null;
+                    DateTime? dateOfCheckOut = null;
+                    DateTime? dueDate = null;
+                    if (!row.IsNull("Borrower_id"))
+                        borrowerId = (int?)row["Borrower_id"];
+                    if (!row.IsNull("date_of_check_out"))
+                        dateOfCheckOut = (DateTime?)row["date_of_check_out"];
+                    if (!row.IsNull("due_date"))
+                        dueDate = (DateTime?)row["due_date"];
                     instances.Add(new DVD_db
-                            (
-                                systemId: (int)row["System_id"],
-                                genre: row["Genre"].ToString(),
-                                publishingDate: (DateTime)row["publishing_date"],
-                                authorId: (int)row["author_id"],
-                                title: row["title"].ToString(),
-                                libraryAddress: row["library_address"].ToString(),
-                                borrowerId: (int)row["Borrower_id"],
-                                dateOfCheckOut: (DateTime)row["date_of_check_out"],
-                                dueDate: (DateTime)row["due_date"],
-                                runTime: (int)row["run_time"]
-                            )
-                        );
+                                (
+                                    systemId: (int)row["System_id"],
+                                    genre: row["Genre"].ToString(),
+                                    publishingDate: (DateTime)row["publishing_date"],
+                                    authorId: (int)row["author_id"],
+                                    title: row["title"].ToString(),
+                                    libraryAddress: row["library_address"].ToString(),
+                                    borrowerId: borrowerId,
+                                    dateOfCheckOut: dateOfCheckOut,
+                                    dueDate: dueDate,
+                                    runTime: (int)row["run_time"]
+                                )
+                            );
+                }
 
                 // Return value
                 statusResponse = new StatusResponse("DVD list has been retrieved successfully.");
