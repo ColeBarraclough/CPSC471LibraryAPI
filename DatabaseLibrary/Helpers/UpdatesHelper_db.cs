@@ -15,7 +15,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Adds a new instance into the database.
         /// </summary>
-        public static Updates_db Add(int librarian_id, int media_id, DbContext context, out StatusResponse statusResponse)
+        public static Updates_db Add(int librarian_id, int media_id, string library_address, DbContext context, out StatusResponse statusResponse)
         {
             try
             {
@@ -23,17 +23,18 @@ namespace DatabaseLibrary.Helpers
                 // Generate a new instance
                 Updates_db instance = new Updates_db
                     (
-                        librarian_id, media_id
+                        librarian_id, media_id, library_address
                     );
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "INSERT INTO updates (librarian_id, media_id) values (@librarian_id, @media_id)",
+                        commandText: "INSERT INTO updates (librarian_id, media_id, library_address) values (@librarian_id, @media_id, @library_address)",
                         parameters: new Dictionary<string, object>()
                         {
                             { "@librarian_id", instance.Librarian_id },
                             { "@media_id", instance.Media_id },
+                            { "@library_address", instance.Library_address }
                         },
                         message: out string message
                     );
@@ -55,7 +56,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Deletes an instance in the database
         /// </summary>
-        public static void Delete(int librarian_id, int media_id, DbContext context, out StatusResponse statusResponse)
+        public static void Delete(int librarian_id, int media_id, string library_address, DbContext context, out StatusResponse statusResponse)
         {
             try
             {
@@ -64,11 +65,12 @@ namespace DatabaseLibrary.Helpers
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM updates WHERE librarian_id = @librarian_id and media_id = @media_id",
+                        commandText: "DELETE FROM updates WHERE librarian_id = @librarian_id and media_id = @media_id and library_address = @library_address",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@librarian_id", librarian_id },
-                            {"@media_id", media_id }
+                            {"@media_id", media_id },
+                            {"@library_address", library_address }
                         },
                         message: out string message
                     );
@@ -113,7 +115,8 @@ namespace DatabaseLibrary.Helpers
                 Updates_db instance = new Updates_db
                             (
                                 librarianId: (int) row["librarian_id"],
-                                mediaId: (int) row["media_id"]
+                                mediaId: (int) row["media_id"],
+                                library_address: row["library_address"].ToString()
                             );
 
                 // Return value
@@ -156,7 +159,8 @@ namespace DatabaseLibrary.Helpers
                     instances.Add(new Updates_db
                             (
                                 librarianId: (int)row["librarian_id"],
-                                mediaId: (int) row["media_id"]
+                                mediaId: (int) row["media_id"],
+                                library_address: row["library_address"].ToString()
                             )
                         );
 

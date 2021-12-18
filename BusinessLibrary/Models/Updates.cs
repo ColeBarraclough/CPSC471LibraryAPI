@@ -22,10 +22,11 @@ namespace BusinessLibrary.Models
         /// <summary>
         /// Fields constructor.
         /// </summary>
-        public Updates(int librarianId, int mediaId)
+        public Updates(int librarianId, int mediaId, string library_address)
         {
             LibrarianId = librarianId;
             MediaId = mediaId;
+            LibraryAddress = library_address;
 
         }
 
@@ -34,7 +35,7 @@ namespace BusinessLibrary.Models
         /// </summary>
         /// <param name="instance">The object to clone from.</param>
         public Updates(Updates instance)
-            : this(instance.LibrarianId, instance.MediaId)
+            : this(instance.LibrarianId, instance.MediaId, instance.LibraryAddress)
         {
         }
 
@@ -53,6 +54,13 @@ namespace BusinessLibrary.Models
         /// </summary>
         [JsonProperty(PropertyName = "media_id")]
         public int MediaId { get; set; }
+
+
+        /// <summary>
+        /// media id of update.
+        /// </summary>
+        [JsonProperty(PropertyName = "library_address")]
+        public string LibraryAddress { get; set; }
 
         #endregion
 

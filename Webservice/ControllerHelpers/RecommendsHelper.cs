@@ -103,9 +103,10 @@ namespace Webservice.ControllerHelpers
             // Extract paramters
             string recommendation_address = (data.ContainsKey("recommendation_address")) ? data.GetValue("recommendation_address").Value<string>() : null;
             string recommendation_card = (data.ContainsKey("recommendation_card")) ? data.GetValue("recommendation_card").Value<string>() : null;
+            string media_id = (data.ContainsKey("media_id")) ? data.GetValue("media_id").Value<string>() : null;
 
             // Add instance to database
-            DatabaseLibrary.Helpers.RecommendsHelper_db.Delete(recommendation_address, recommendation_card, context, out StatusResponse statusResponse);
+            DatabaseLibrary.Helpers.RecommendsHelper_db.Delete(recommendation_address, recommendation_card, media_id, context, out StatusResponse statusResponse);
 
             bool failed = false;
 
@@ -131,12 +132,12 @@ namespace Webservice.ControllerHelpers
         /// Gets a Recommends.
         /// </summary>
         /// <param name="includeDetailedErrors">States whether the internal server error message should be detailed or not.</param>
-        public static ResponseMessage Get(string? recommendation_address, string?  recommendation_card,
+        public static ResponseMessage Get(string? recommendation_address, string?  recommendation_card, string? media_id,
         DbContext context, out HttpStatusCode statusCode, bool includeDetailedErrors = false)
         {
 
             // Get instances from database
-            var dbInstance = DatabaseLibrary.Helpers.RecommendsHelper_db.Get(recommendation_address, recommendation_card,
+            var dbInstance = DatabaseLibrary.Helpers.RecommendsHelper_db.Get(recommendation_address, recommendation_card, media_id,
                 context, out StatusResponse statusResponse);
 
             // Convert to business logic objects

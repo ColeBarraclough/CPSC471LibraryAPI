@@ -130,7 +130,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Deletes an instance in the database
         /// </summary>
-        public static void Delete(string recommendation_address, string recommendation_card, DbContext context, out StatusResponse statusResponse)
+        public static void Delete(string recommendation_address, string recommendation_card, string media_id, DbContext context, out StatusResponse statusResponse)
         {
             try
             {
@@ -139,16 +139,19 @@ namespace DatabaseLibrary.Helpers
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a recommendation address.");
                 if (recommendation_card == "")
                     throw new StatusException(HttpStatusCode.BadRequest, "Please provide a recommendation_card.");
+                if (media_id == "")
+                    throw new StatusException(HttpStatusCode.BadRequest, "Please provide a media id.");
 
 
                 // Add to database
                 int rowsAffected = context.ExecuteNonQueryCommand
                     (
-                        commandText: "DELETE FROM recommends WHERE recommendation_address = @recommendation_address and recommendation_card = @recommendation_card",
+                        commandText: "DELETE FROM recommends WHERE recommendation_address = @recommendation_address and recommendation_card = @recommendation_card and media_id = @media_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@recommendation_address", recommendation_address },
-                            {"@recommendation_card", recommendation_card }
+                            {"@recommendation_card", recommendation_card },
+                            {"@media_id", media_id }
                         },
                         message: out string message
                     );
@@ -168,7 +171,7 @@ namespace DatabaseLibrary.Helpers
         /// <summary>
         /// Retrieves an instance.
         /// </summary>
-        public static Recommends_db Get(string recommendation_address, string recommendation_card,
+        public static Recommends_db Get(string recommendation_address, string recommendation_card, string media_id,
             DbContext context, out StatusResponse statusResponse)
         {
             try
@@ -176,11 +179,12 @@ namespace DatabaseLibrary.Helpers
                 // Get from database
                 DataTable table = context.ExecuteDataQueryCommand
                     (
-                        commandText: "SELECT * FROM recommends WHERE recommendation_address = @recommendation_address and recommendation_card = @recommendation_card",
+                        commandText: "SELECT * FROM recommends WHERE recommendation_address = @recommendation_address and recommendation_card = @recommendation_card and media_id = @media_id",
                         parameters: new Dictionary<string, object>()
                         {
                             {"@recommendation_address", recommendation_address },
-                            {"@recommendation_card", recommendation_card }
+                            {"@recommendation_card", recommendation_card },
+                            {"@media_id", media_id }
                         },
                         message: out string message
                     );

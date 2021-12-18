@@ -53,9 +53,9 @@ namespace Webservice.Controllers
         // Gets an instance.
         [HttpGet]
         [Route("recommendation")]
-        public ResponseMessage GetRecommends(string? recommendation_address, string? recommendation_card)
+        public ResponseMessage GetRecommends(string? recommendation_address, string? recommendation_card, string? media_id)
         {
-            if (recommendation_address == null || recommendation_card == null)
+            if (recommendation_address == null || recommendation_card == null || media_id == null)
             {
                 var response = RecommendsHelper.GetCollection(
                 context: Database.DbContext,
@@ -65,7 +65,7 @@ namespace Webservice.Controllers
                 return response;
             } else
             {
-                var response = RecommendsHelper.Get(recommendation_address, recommendation_card,
+                var response = RecommendsHelper.Get(recommendation_address, recommendation_card, media_id,
                 context: Database.DbContext,
                 statusCode: out HttpStatusCode statusCode,
                 includeDetailedErrors: HostingEnvironment.IsDevelopment());

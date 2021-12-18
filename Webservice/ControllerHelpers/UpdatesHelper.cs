@@ -22,7 +22,7 @@ namespace Webservice.ControllerHelpers
         {
             if (instance == null)
                 return null;
-            return new BusinessLibrary.Models.Updates(instance.Librarian_id, instance.Media_id);
+            return new BusinessLibrary.Models.Updates(instance.Librarian_id, instance.Media_id, instance.Library_address);
         }
 
         #endregion
@@ -37,10 +37,11 @@ namespace Webservice.ControllerHelpers
             // Extract paramters
             int librarian_id = (data.ContainsKey("librarian_id")) ? data.GetValue("librarian_id").Value<int>() : -1;
             int media_id = (data.ContainsKey("media_id")) ? data.GetValue("media_id").Value<int>() : -1;
+            string library_address = (data.ContainsKey("library_address")) ? data.GetValue("library_address").Value<string>() : null;
 
 
             // Add instance to database
-            var dbInstance = DatabaseLibrary.Helpers.UpdatesHelper_db.Add(librarian_id, media_id,
+            var dbInstance = DatabaseLibrary.Helpers.UpdatesHelper_db.Add(librarian_id, media_id, library_address,
                 context, out StatusResponse statusResponse);
 
             // Get rid of detailed internal server error message (when requested)
@@ -69,9 +70,10 @@ namespace Webservice.ControllerHelpers
             // Extract paramters
             int librarian_id = (data.ContainsKey("librarian_id")) ? data.GetValue("librarian_id").Value<int>() : -1;
             int media_id = (data.ContainsKey("media_id")) ? data.GetValue("media_id").Value<int>() : -1;
+            string library_address = (data.ContainsKey("library_address")) ? data.GetValue("library_address").Value<string>() : null;
 
             // Add instance to database
-            DatabaseLibrary.Helpers.UpdatesHelper_db.Delete(librarian_id, media_id, context, out StatusResponse statusResponse);
+            DatabaseLibrary.Helpers.UpdatesHelper_db.Delete(librarian_id, media_id, library_address, context, out StatusResponse statusResponse);
 
             bool failed = false;
 
